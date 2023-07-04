@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.DTO.Request.Products;
+using ShoesShoppingOnline.DTO.Request.Users;
 using ShoesShoppingOnline.Models;
+using System.Security.Claims;
 
 namespace ShoesShoppingOnline.Controllers
 {
@@ -15,18 +18,33 @@ namespace ShoesShoppingOnline.Controllers
         {
             _context = context;
         }
-
         // GET: api/Products
-        [HttpGet]
+        [Authorize]
+        [HttpGet("get-all")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            if (_context.Products == null)
-            {
-                return NotFound();
-            }
+            var user = GetCurrentUser();
+
             return await _context.Products.ToListAsync();
         }
 
+        private UserRequest GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                return new UserRequest
+                {
+                    RoleId = Convert.ToInt32(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value),
+                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    FullName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value
+
+                };
+            }
+            return null;
+        }
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)

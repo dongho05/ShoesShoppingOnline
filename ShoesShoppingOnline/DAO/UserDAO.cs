@@ -4,6 +4,41 @@ namespace ShoesShoppingOnline.DAO
 {
     public class UserDAO
     {
+        public static User GetUserByUsername(string username)
+        {
+            var member = new User();
+            try
+            {
+                using (var connection = new ShoesShoppingOnlineContext())
+                {
+                    member = connection.Users.FirstOrDefault(x => x.UserName.Equals(username));
+                    member.Role = RoleDAO.GetRoleById(member.RoleId);
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return member;
+        }
+        public static User Login(string username, string password)
+        {
+            var member = new User();
+            try
+            {
+                using (var connection = new ShoesShoppingOnlineContext())
+                {
+                    member = connection.Users.FirstOrDefault(x => x.UserName.Equals(username) && x.Password.Equals(password));
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return member;
+        }
         public static List<User> GetAllUsers()
         {
             try

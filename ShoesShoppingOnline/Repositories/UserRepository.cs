@@ -13,6 +13,10 @@ namespace ShoesShoppingOnline.Repositories
 
         public User GetUserById(int id) => UserDAO.GetUserById(id);
 
+        public User GetUserByUsername(string username) => UserDAO.GetUserByUsername(username);
+
+        public User Login(string username, string password) => UserDAO.Login(username, password);
+
         public void UpdateUser(User user) => UserDAO.UpdateUser(user);
     }
 }

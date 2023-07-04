@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using ShoesShoppingOnline.Models;
 using ShoesShoppingOnline.Repositories;
+using System.Text;
 
 namespace ShoesShoppingOnline
 {
@@ -23,6 +26,23 @@ namespace ShoesShoppingOnline
             builder.Services.AddSingleton<IOrderDetailRepository, OrderDetailRepository>();
             builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
+
+            // add configure jwt bearer
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["JWTSettings:validIssuer"],
+            ValidAudience = builder.Configuration["JWTSettings:validIssuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:securityKey"]))
+        };
+    });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -36,8 +56,8 @@ namespace ShoesShoppingOnline
                 app.UseSwaggerUI();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 

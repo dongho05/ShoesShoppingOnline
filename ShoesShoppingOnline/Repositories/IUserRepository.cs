@@ -9,5 +9,7 @@ namespace ShoesShoppingOnline.Repositories
         void AddUser(User user);
         void UpdateUser(User user);
         void DeleteUser(User user);
+        User Login(string username, string password);
+        User GetUserByUsername(string username);
     }
 }
