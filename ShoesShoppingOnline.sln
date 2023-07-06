@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoesShoppingOnline", "ShoesShoppingOnline\ShoesShoppingOnline.csproj", "{18C89505-0C2B-4FF1-AA0B-BA0721F0A993}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoesShoppingOnline", "ShoesShoppingOnline\ShoesShoppingOnline.csproj", "{18C89505-0C2B-4FF1-AA0B-BA0721F0A993}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopClient", "ShopClient\ShopClient.csproj", "{ABED9113-5DE1-4796-AB88-18AB463B5F52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{18C89505-0C2B-4FF1-AA0B-BA0721F0A993}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18C89505-0C2B-4FF1-AA0B-BA0721F0A993}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18C89505-0C2B-4FF1-AA0B-BA0721F0A993}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABED9113-5DE1-4796-AB88-18AB463B5F52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABED9113-5DE1-4796-AB88-18AB463B5F52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABED9113-5DE1-4796-AB88-18AB463B5F52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABED9113-5DE1-4796-AB88-18AB463B5F52}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.DTO.Request.Products;
 using ShoesShoppingOnline.DTO.Request.Users;
@@ -19,11 +18,11 @@ namespace ShoesShoppingOnline.Controllers
             _context = context;
         }
         // GET: api/Products
-        [Authorize]
+        //[Authorize]
         [HttpGet("get-all")]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            var user = GetCurrentUser();
+            //var user = GetCurrentUser();
 
             return await _context.Products.ToListAsync();
         }
