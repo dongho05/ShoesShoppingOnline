@@ -19,7 +19,7 @@ namespace ShoesShoppingOnline.Controllers
         }
         // GET: api/Products
         //[Authorize]
-        [HttpGet("get-all")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             //var user = GetCurrentUser();

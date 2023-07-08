@@ -25,7 +25,7 @@ namespace ShopClient.Controllers
             try
             {
                 RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Products/get-all", RestSharp.Method.Get);
+                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
                 requesrUrl.AddHeader("content-type", "application/json");
                 var response = await client.ExecuteAsync(requesrUrl);
                 var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);

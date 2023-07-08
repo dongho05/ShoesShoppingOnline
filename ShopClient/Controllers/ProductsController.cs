@@ -61,7 +61,7 @@ namespace ShopClient.Controllers
         public async Task<ActionResult> Index(int currentPage)
         {
             RestClient client = new RestClient(ApiPort);
-            var requesrUrl = new RestRequest($"api/Products/get-all", RestSharp.Method.Get);
+            var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
             var response = await client.ExecuteAsync(requesrUrl);
             var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
@@ -82,7 +82,7 @@ namespace ShopClient.Controllers
         public async Task<ActionResult> Filter(int currentPage)
         {
             RestClient client = new RestClient(ApiPort);
-            var requesrUrl = new RestRequest($"api/Products/get-all", RestSharp.Method.Get);
+            var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
             var response = await client.ExecuteAsync(requesrUrl);
             var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
@@ -161,9 +161,20 @@ namespace ShopClient.Controllers
         }
 
         // GET: ProductsController/Details/5
-        public ActionResult Details(int id)
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            RestClient client = new RestClient(ApiPort);
+            var requesrUrl = new RestRequest($"api/Products/" + id, RestSharp.Method.Get);
+            requesrUrl.AddHeader("content-type", "application/json");
+            var response = await client.ExecuteAsync(requesrUrl);
+            var product = JsonConvert.DeserializeObject<Product>(response.Content);
+
+
+            var listBrand = GetBrands().Result.ToList().Where(x => x.BrandId == product.BrandId);
+            var listCategory = GetCategories().Result.ToList().Where(x => x.CategoryId == product.CategoryId);
+            ViewData["brandName"] = listBrand.FirstOrDefault().BrandName;
+            ViewData["categoryName"] = listCategory.FirstOrDefault().CategoryName;
+            return View(product);
         }
 
         // GET: ProductsController/Create

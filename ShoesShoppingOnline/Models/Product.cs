@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ShoesShoppingOnline.Models
+﻿namespace ShoesShoppingOnline.Models
 {
     public partial class Product
     {
@@ -14,7 +11,7 @@ namespace ShoesShoppingOnline.Models
         public string ProductName { get; set; } = null!;
         public string? ImageProduct { get; set; }
         public string? Describe { get; set; }
-        public int? CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public int BrandId { get; set; }
         public double UnitPrice { get; set; }
         public int UnitInStock { get; set; }
