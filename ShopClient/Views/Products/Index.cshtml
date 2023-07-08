@@ -1,0 +1,222 @@
+﻿<section class="">
+    <div class="container">
+        <div class="row">
+            <!-- sidebar -->
+            <div class="col-lg-3">
+                <!-- Toggle button -->
+                <button class="btn btn-outline-secondary mb-3 w-100 d-lg-none"
+                        type="button"
+                        data-mdb-toggle="collapse"
+                        data-mdb-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span>Show filter</span>
+                </button>
+                <!-- Collapsible wrapper -->
+                <div class="collapse card d-lg-block mb-5" id="navbarSupportedContent">
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <form asp-controller="Products" asp-action="Filter" method="post">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button text-dark bg-light"
+                                            type="button"
+                                            data-mdb-toggle="collapse"
+                                            data-mdb-target="#panelsStayOpen-collapseTwo"
+                                            aria-expanded="true"
+                                            aria-controls="panelsStayOpen-collapseTwo">
+                                        Brands
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                                    <div class="accordion-body">
+                                        <div>
+                                            <!-- Checked checkbox -->
+                                            @foreach (var item in ViewBag.listBrand)
+                                            {
+                                                bool isChecked = item.BrandId == ViewBag.brandId;
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="BrandId" name="BrandId" value="@item.BrandId" @(isChecked?"checked":"") />
+                                                    <label class="form-check-label" for="flexCheckChecked1">@item.BrandName</label>
+                                                    <span class="badge badge-secondary float-end">120</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingTwo">
+                                    <button class="accordion-button text-dark bg-light"
+                                            type="button"
+                                            data-mdb-toggle="collapse"
+                                            data-mdb-target="#panelsStayOpen-collapseTwo"
+                                            aria-expanded="true"
+                                            aria-controls="panelsStayOpen-collapseTwo">
+                                        Category
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                                    <div class="accordion-body">
+                                        <div>
+                                            <!-- Checked checkbox -->
+                                            @foreach (var item in ViewBag.listCategory)
+                                            {
+                                                bool isChecked = item.CategoryId == ViewBag.categoryId;
+                                                <div class="form-check">
+                                                    
+                                                    <input class="form-check-input" type="checkbox" id="CategoryId" name="CategoryId" value="@item.CategoryId" @(isChecked ? "checked":"") />
+                                                    <label class="form-check-label" for="flexCheckChecked1">@item.CategoryName</label>
+                                                    <span class="badge badge-secondary float-end">120</span>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="headingThree">
+                                    <button class="accordion-button text-dark bg-light"
+                                            type="button"
+                                            data-mdb-toggle="collapse"
+                                            data-mdb-target="#panelsStayOpen-collapseThree"
+                                            aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseThree">
+                                        Price
+                                    </button>
+                                </h2>
+                                <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
+                                    <div class="accordion-body">
+                                        <div class="row mb-3">
+                                            <div class="col-6">
+                                                <p class="mb-0">
+                                                    Min
+                                                </p>
+                                                <div class="form-outline">
+                                                    <input type="number" id="MinPrice" name="MinPrice" class="form-control" value="@ViewBag.MinPrice" />
+                                                    <label class="form-label" for="typeNumber">$0</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <p class="mb-0">
+                                                    Max
+                                                </p>
+                                                <div class="form-outline">
+                                                    <input type="number" id="MaxPrice" name="MaxPrice" class="form-control" value="@ViewBag.MaxPrice"/>
+                                                    <label class="form-label" for="typeNumber">$1,0000</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="submit" class="btn btn-white w-100 border border-secondary" value="Apply"/>
+                            </div>
+                        </form>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button text-dark bg-light"
+                                        type="button"
+                                        data-mdb-toggle="collapse"
+                                        data-mdb-target="#panelsStayOpen-collapseFour"
+                                        aria-expanded="false"
+                                        aria-controls="panelsStayOpen-collapseFour">
+                                    Size
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse show" aria-labelledby="headingThree">
+                                <div class="accordion-body">
+                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check1" checked autocomplete="off" />
+                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check1">XS</label>
+                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check2" checked autocomplete="off" />
+                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check2">SM</label>
+                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check3" checked autocomplete="off" />
+                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check3">LG</label>
+                                    <input type="checkbox" class="btn-check border justify-content-center" id="btn-check4" checked autocomplete="off" />
+                                    <label class="btn btn-white mb-1 px-1" style="width: 60px;" for="btn-check4">XXL</label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- sidebar -->
+            <!-- content -->
+            <div class="col-lg-9">
+                <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
+                    <strong class="d-block py-2">32 Items found </strong>
+                    <div class="ms-auto">
+                        <select class="form-select d-inline-block w-auto border pt-1">
+                            <option value="0">Best match</option>
+                            <option value="1">Recommended</option>
+                            <option value="2">High rated</option>
+                            <option value="3">Randomly</option>
+                        </select>
+                        <div class="btn-group shadow-0 border">
+                            <a href="#" class="btn btn-light" title="List view">
+                                <i class="fa fa-bars fa-lg"></i>
+                            </a>
+                            <a href="#" class="btn btn-light active" title="Grid view">
+                                <i class="fa fa-th fa-lg"></i>
+                            </a>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                            <div class="card w-100 my-2 shadow-2-strong">
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">
+                                    <img src="@item.ImageProduct" class="card-img-top" />
+                                </a>
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-row">
+                                        <h5 class="mb-1 me-1">$@(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</h5>
+                                        <span class="text-danger"><s>$@item.UnitPrice</s></span>
+                                    </div>
+                                    <p class="card-text">@item.ProductName</p>
+                                    <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                        <a asp-controller="Cart" asp-action="Index" class="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <hr />
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+                        <ul class="pagination">
+                            @if (ViewBag.currentPage != 0)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-currentPage="@(ViewBag.currentPage - 1)" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            }
+                            @for (int i = 0; i <= ViewBag.NumberOfPages; i++)
+                            {
+                                <li class="page-item "><a class="page-link" asp-controller="Products" asp-action="Index" asp-route-currentPage="@i">@i</a></li>
+
+                            }
+                            @if (ViewBag.currentPage < ViewBag.NumberOfPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-controller="Products" asp-action="Index" asp-route-currentPage="@(ViewBag.currentPage + 1)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            }
+
+                        </ul>
+                    </nav>
+                    <!-- Pagination -->
+                </div>
+            </div>
+        </div>
+</section>

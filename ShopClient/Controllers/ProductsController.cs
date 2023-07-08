@@ -58,9 +58,106 @@ namespace ShopClient.Controllers
             }
         }
         // GET: ProductsController
-        public ActionResult Index()
+        public async Task<ActionResult> Index(int currentPage)
         {
-            return View();
+            RestClient client = new RestClient(ApiPort);
+            var requesrUrl = new RestRequest($"api/Products/get-all", RestSharp.Method.Get);
+            requesrUrl.AddHeader("content-type", "application/json");
+            var response = await client.ExecuteAsync(requesrUrl);
+            var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
+
+            ViewData["NumberOfPages"] = products.Count / 6;
+
+            products = products.Skip(6 * currentPage).Take(6).ToList();
+
+            var listBrand = GetBrands();
+            var listCategory = GetCategories();
+            ViewData["listBrand"] = listBrand.Result.ToList();
+            ViewData["listCategory"] = listCategory.Result.ToList();
+            ViewData["currentPage"] = currentPage;
+
+            return View(products);
+        }
+
+        public async Task<ActionResult> Filter(int currentPage)
+        {
+            RestClient client = new RestClient(ApiPort);
+            var requesrUrl = new RestRequest($"api/Products/get-all", RestSharp.Method.Get);
+            requesrUrl.AddHeader("content-type", "application/json");
+            var response = await client.ExecuteAsync(requesrUrl);
+            var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
+
+            ViewData["NumberOfPages"] = products.Count / 6;
+
+            products = products.Skip(6 * currentPage).Take(6).ToList();
+
+            int brandId = 0, categoryId = 0;
+
+            if (!String.IsNullOrEmpty(Request.Form["BrandId"]))
+            {
+
+                brandId = int.Parse(Request.Form["BrandId"]);
+            }
+            if (!String.IsNullOrEmpty(Request.Form["CategoryId"]))
+            {
+                categoryId = int.Parse(Request.Form["CategoryId"]);
+            }
+
+
+            if (brandId != 0)
+            {
+                products = products.Where(x => x.BrandId == brandId).ToList();
+                if (categoryId != 0)
+                {
+                    products = products.Where(x => x.CategoryId == categoryId).ToList();
+                }
+            }
+            else
+            {
+                if (categoryId != 0)
+                {
+                    products = products.Where(x => x.CategoryId == categoryId).ToList();
+                }
+            }
+
+            float minPrice = 0.0f, maxPrice = 0.0f;
+
+            if (!String.IsNullOrEmpty(Request.Form["MinPrice"]))
+            {
+                minPrice = float.Parse(Request.Form["MinPrice"]);
+            }
+            if (!String.IsNullOrEmpty(Request.Form["MaxPrice"]))
+            {
+                maxPrice = float.Parse(Request.Form["MaxPrice"]);
+            }
+            if (minPrice > 0.0f)
+            {
+                products = products.Where(x => x.UnitPrice >= minPrice).ToList();
+                if (maxPrice > 0 && maxPrice > minPrice)
+                {
+                    products = products.Where(x => x.UnitPrice <= maxPrice && x.UnitPrice >= minPrice).ToList();
+                }
+            }
+            else
+            {
+                if (maxPrice > 0.0f)
+                {
+                    products = products.Where(x => x.UnitPrice <= maxPrice).ToList();
+                }
+            }
+
+            var listBrand = GetBrands();
+            var listCategory = GetCategories();
+            ViewData["listBrand"] = listBrand.Result.ToList();
+            ViewData["listCategory"] = listCategory.Result.ToList();
+            ViewData["currentPage"] = currentPage;
+            ViewData["brandId"] = brandId;
+            ViewData["categoryId"] = categoryId;
+            ViewData["MinPrice"] = minPrice;
+            ViewData["MaxPrice"] = maxPrice;
+
+
+            return View("Index", products);
         }
 
         // GET: ProductsController/Details/5
