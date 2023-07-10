@@ -242,9 +242,9 @@ namespace ShopClient.Controllers
             try
             {
                 RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Post);
+                var requesrUrl = new RestRequest("api/Products", RestSharp.Method.Post);
                 requesrUrl.AddHeader("content-type", "application/json");
-                requesrUrl.AddHeader("authorization", "Bearer " + token);
+                //requesrUrl.AddHeader("authorization", "Bearer " + token);
                 var body = new Product
                 {
                     ProductName = request.ProductName,
@@ -258,6 +258,8 @@ namespace ShopClient.Controllers
                     UnitInStock = request.UnitInStock,
                     UnitPrice = request.UnitPrice,
                 };
+                var tokenAuth = "Bearer " + token;
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
             }
