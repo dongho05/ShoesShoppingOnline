@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.DTO.Request.Products;
 using ShoesShoppingOnline.DTO.Request.Users;
@@ -18,7 +19,6 @@ namespace ShoesShoppingOnline.Controllers
             _context = context;
         }
         // GET: api/Products
-        //[Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
@@ -102,6 +102,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Product>> PostProduct(ProductRequest request)
         {

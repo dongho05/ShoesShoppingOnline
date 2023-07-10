@@ -57,6 +57,25 @@ namespace ShopClient.Controllers
                 throw;
             }
         }
+
+        public async Task<List<Product>> GetProducts()
+        {
+            try
+            {
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var response = await client.ExecuteAsync(requesrUrl);
+                var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
+                return products;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         // GET: ProductsController
         public async Task<ActionResult> Index(int currentPage)
         {
@@ -172,8 +191,14 @@ namespace ShopClient.Controllers
 
             var listBrand = GetBrands().Result.ToList().Where(x => x.BrandId == product.BrandId);
             var listCategory = GetCategories().Result.ToList().Where(x => x.CategoryId == product.CategoryId);
+
+            var relatedProduct = GetProducts().Result.ToList().Where(x => x.CategoryId == product.CategoryId).Where(x => x.IsActivated == true).Take(4);
+
+
+            ViewData["relatedProduct"] = relatedProduct.ToList();
             ViewData["brandName"] = listBrand.FirstOrDefault().BrandName;
             ViewData["categoryName"] = listCategory.FirstOrDefault().CategoryName;
+
             return View(product);
         }
 
@@ -212,11 +237,14 @@ namespace ShopClient.Controllers
                 }
             }
 
+            var token = HttpContext.Session.GetString("AuthToken");
+
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Post);
                 requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddHeader("authorization", "Bearer " + token);
                 var body = new Product
                 {
                     ProductName = request.ProductName,

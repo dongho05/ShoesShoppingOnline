@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RestSharp;
 using ShopClient.DTO.Request.Login;
-using System.Net.Http.Headers;
 using System.Text.Json;
 
 namespace ShopClient.Controllers
@@ -13,9 +12,6 @@ namespace ShopClient.Controllers
         private string ApiPort = "";
         public LoginController(IConfiguration configuration)
         {
-            client = new HttpClient();
-            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentType);
             this.configuration = configuration;
             ApiPort = configuration.GetSection("ApiHost").Value;
         }
@@ -47,7 +43,7 @@ namespace ShopClient.Controllers
 
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-
+                    HttpContext.Session.SetString("AuthToken", response.Content.ToString());
                     return RedirectToAction("Index", "Home");
                 }
 
