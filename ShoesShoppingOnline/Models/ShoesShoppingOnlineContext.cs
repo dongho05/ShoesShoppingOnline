@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ShoesShoppingOnline.Models
 {
@@ -14,6 +17,7 @@ namespace ShoesShoppingOnline.Models
         }
 
         public virtual DbSet<Brand> Brands { get; set; } = null!;
+        public virtual DbSet<Cart> Carts { get; set; } = null!;
         public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
@@ -23,10 +27,10 @@ namespace ShoesShoppingOnline.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            var conf = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(conf.GetConnectionString("ShoppingOnlineDB"));
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("server=DESKTOP-MFS8R3L\\HPDONG;database=ShoesShoppingOnline;Integrated security=true");
             }
         }
 
@@ -41,6 +45,33 @@ namespace ShoesShoppingOnline.Models
                 entity.Property(e => e.BrandName)
                     .IsUnicode(false)
                     .HasColumnName("brand_name");
+            });
+
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.ToTable("Cart");
+
+                entity.Property(e => e.CartId).HasColumnName("cart_id");
+
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
+
+                entity.Property(e => e.UnitPrice).HasColumnName("unit_price");
+
+                entity.Property(e => e.UserId).HasColumnName("user_id");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(d => d.ProductId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Cart__product_id__5DCAEF64");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Carts)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Cart__unit_price__5CD6CB2B");
             });
 
             modelBuilder.Entity<Category>(entity =>
@@ -146,6 +177,7 @@ namespace ShoesShoppingOnline.Models
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Products)
                     .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Product__categor__34C8D9D1");
             });
 

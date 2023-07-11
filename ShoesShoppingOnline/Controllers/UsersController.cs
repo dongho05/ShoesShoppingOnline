@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.DTO.Request.Users;
 using ShoesShoppingOnline.Models;
+using ShoesShoppingOnline.Repositories;
+using System.Security.Claims;
 
 namespace ShoesShoppingOnline.Controllers
 {
@@ -10,10 +13,12 @@ namespace ShoesShoppingOnline.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ShoesShoppingOnlineContext _context;
+        private readonly IUserRepository repo;
 
-        public UsersController(ShoesShoppingOnlineContext context)
+        public UsersController(ShoesShoppingOnlineContext context, IUserRepository repo)
         {
             _context = context;
+            this.repo = repo;
         }
 
         // GET: api/Users
@@ -25,6 +30,30 @@ namespace ShoesShoppingOnline.Controllers
                 return NotFound();
             }
             return await _context.Users.ToListAsync();
+        }
+        [Authorize]
+        [HttpGet("get-current-user")]
+        public UserRequest GetUserContext()
+        {
+            return GetCurrentUser();
+        }
+
+        private UserRequest GetCurrentUser()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+            if (identity != null)
+            {
+                var userClaims = identity.Claims;
+                return new UserRequest
+                {
+                    RoleId = Convert.ToInt32(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value),
+                    UserName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value,
+                    FullName = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Surname)?.Value,
+                    Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value
+
+                };
+            }
+            return null;
         }
 
         // GET: api/Users/5
@@ -131,6 +160,18 @@ namespace ShoesShoppingOnline.Controllers
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
+        }
+
+        [HttpGet("get-user-by-username/{username}")]
+        public async Task<ActionResult<User>> GetUserByUserName(string username)
+        {
+            var user = repo.GetUserByUsername(username);
+            if (user == null)
+            {
+                return null;
+            }
+            return user;
+
         }
     }
 }

@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>Eflyer</title>
+    <title>Homepage</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -44,7 +44,7 @@
 <body>
     <!-- banner bg main start -->
     <div class="banner_bg_main">
-        
+
         <!-- logo section start -->
         <div class="logo_section">
             <div class="container">
@@ -66,17 +66,18 @@
                         <a href="Products">Shopping</a>
                     </div>
                     <span class="toggle_icon" onclick="openNav()"><img src="images/toggle-icon.png"></span>
-                    
+
                     <div class="main">
                         <!-- Another variation with a button -->
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search this blog">
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary" type="button" style="background-color: #f26522; border-color:#f26522 ">
-                                    <i class="fa fa-search"></i>
-                                </button>
+                        <form asp-controller="Products" asp-action="SearchProduct" method="post">
+                            <div class="input-group">
+                                <input type="text" id="name_product_searching" name="name_product_searching" class="form-control" placeholder="Search product you want">
+                                <div class="input-group-append">
+                                    
+                                    <input class="btn btn-secondary" type="submit" value="Search" />
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                     <div class="header_box">
                         <div class="login_menu">
@@ -87,12 +88,34 @@
                                         <span class="padding_10">Cart</span>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                        <span class="padding_10">Cart</span>
-                                    </a>
-                                </li>
+                                @if (ViewBag.Name == null)
+                                {
+                                    <li>
+                                        <a href="Login">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            <span class="padding_10">Login</span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (ViewBag.Name != null)
+                                {
+                                    <li>
+                                        <a href="Login">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            <span class="padding_10">Logout</span>
+                                        </a>
+                                    </li>
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            @ViewBag.Name
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </div>
+                                    </div>
+                                }
                             </ul>
                         </div>
                     </div>
@@ -148,35 +171,23 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <div class="container">
-                        <h1 class="fashion_taital">Man & Woman Fashion</h1>
+                        <h1 class="fashion_taital">Products are on sale</h1>
                         <div class="fashion_section_2">
                             <div class="row">
-                                @foreach (var item in Model)
+                                @foreach (var item in ViewBag.saledProduct)
                                 {
                                     <div class="col-lg-4 col-sm-4">
                                         <div class="box_main">
                                             <h4 class="shirt_text">@item.ProductName</h4>
-                                            <p class="price_text">Price  <span style="color: #262626;">$ @item.UnitPrice</span></p>
+                                            <p class="price_text">Price  <span style="color: #262626;">$ @(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</span></p>
                                             <div class="tshirt_img"><img src="@item.ImageProduct"></div>
                                             <div class="btn_main">
                                                 <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                                <div class="seemore_bt"><a href="#">See More</a></div>
+                                                <div class="seemore_bt"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">See More</a></div>
                                             </div>
                                         </div>
                                     </div>
                                 }
-                                
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Woman Scart</h4>
-                                        <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
-                                        <div class="tshirt_img"><img src="images/women-clothes-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
 
                             </div>
                         </div>
@@ -184,47 +195,29 @@
                 </div>
                 <div class="carousel-item">
                     <div class="container">
-                        <h1 class="fashion_taital">Man & Woman Fashion</h1>
+                        <h1 class="fashion_taital">Product Sale Most</h1>
                         <div class="fashion_section_2">
                             <div class="row">
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Man T -shirt</h4>
-                                        <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
-                                        <div class="tshirt_img"><img src="images/tshirt-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
+                                @foreach (var item in ViewBag.saledProduct)
+                                {
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="box_main">
+                                            <h4 class="shirt_text">@item.ProductName</h4>
+                                            <p class="price_text">Price  <span style="color: #262626;">$ @(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</span></p>
+                                            <div class="tshirt_img"><img src="@item.ImageProduct"></div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                                <div class="seemore_bt"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">See More</a></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Man -shirt</h4>
-                                        <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
-                                        <div class="tshirt_img"><img src="images/dress-shirt-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Woman Scart</h4>
-                                        <p class="price_text">Price  <span style="color: #262626;">$ 30</span></p>
-                                        <div class="tshirt_img"><img src="images/women-clothes-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                }
+
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
                 <i class="fa fa-angle-left"></i>
@@ -241,89 +234,52 @@
             <div class="carousel-inner">
                 <div class="carousel-item active">
                     <div class="container">
-                        <h1 class="fashion_taital">Electronic</h1>
+                        <h1 class="fashion_taital">Hot Product</h1>
                         <div class="fashion_section_2">
                             <div class="row">
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Laptop</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/laptop-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
+                                @foreach (var item in ViewBag.productsBuyMost)
+                                {
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="box_main">
+                                            <h4 class="shirt_text">@item.ProductName</h4>
+                                            <p class="price_text">Start Price  <span style="color: #262626;">$ @(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</span></p>
+                                            <div class="electronic_img"><img src="@item.ImageProduct"></div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                                <div class="seemore_bt"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">See More</a></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Mobile</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/mobile-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Computers</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/computer-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                }
+
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item">
                     <div class="container">
-                        <h1 class="fashion_taital">Electronic</h1>
+                        <h1 class="fashion_taital">Hot Product</h1>
                         <div class="fashion_section_2">
                             <div class="row">
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Laptop</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/laptop-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
+                                @foreach (var item in ViewBag.productsBuyMost)
+                                {
+                                    <div class="col-lg-4 col-sm-4">
+                                        <div class="box_main">
+                                            <h4 class="shirt_text">@item.ProductName</h4>
+                                            <p class="price_text">Start Price  <span style="color: #262626;">$ @(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</span></p>
+                                            <div class="electronic_img"><img src="@item.ImageProduct"></div>
+                                            <div class="btn_main">
+                                                <div class="buy_bt"><a href="#">Buy Now</a></div>
+                                                <div class="seemore_bt"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">See More</a></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Mobile</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/mobile-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-sm-4">
-                                    <div class="box_main">
-                                        <h4 class="shirt_text">Computers</h4>
-                                        <p class="price_text">Start Price  <span style="color: #262626;">$ 100</span></p>
-                                        <div class="electronic_img"><img src="images/computer-img.png"></div>
-                                        <div class="btn_main">
-                                            <div class="buy_bt"><a href="#">Buy Now</a></div>
-                                            <div class="seemore_bt"><a href="#">See More</a></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                }
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
             </div>
             <a class="carousel-control-prev" href="#electronic_main_slider" role="button" data-slide="prev">
                 <i class="fa fa-angle-left"></i>
@@ -422,56 +378,56 @@
                         </div>
                     </div>
                 </div>
-                
-            <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
-                <i class="fa fa-angle-left"></i>
-            </a>
-            <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
-                <i class="fa fa-angle-right"></i>
-            </a>
-            <div class="loader_main">
-                <div class="loader"></div>
-            </div>
-        </div>
-    </div>
-    <!-- jewellery  section end -->
-    <!-- footer section start -->
-    <div class="footer_section layout_padding">
-        <div class="container">
-            <div class="footer_logo"><a href="index.html"><img src="images/footer-logo.png"></a></div>
-            <div class="input_bt">
-                <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
-                <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
-            </div>
-            
-            <div class="location_main">Help Line  Number : <a href="#">+1 1800 1200 1200</a></div>
-        </div>
-    </div>
-    <!-- footer section end -->
-    <!-- copyright section start -->
-    <div class="copyright_section">
-        <div class="container">
-            <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
-        </div>
-    </div>
-    <!-- copyright section end -->
-    <!-- Javascript files-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-3.0.0.min.js"></script>
-    <script src="js/plugin.js"></script>
-    <!-- sidebar -->
-    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/custom.js"></script>
-    <script>
-        function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-        }
 
-        function closeNav() {
-            document.getElementById("mySidenav").style.width = "0";
-        }
-    </script>
+                <a class="carousel-control-prev" href="#jewellery_main_slider" role="button" data-slide="prev">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                <a class="carousel-control-next" href="#jewellery_main_slider" role="button" data-slide="next">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                <div class="loader_main">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+        <!-- jewellery  section end -->
+        <!-- footer section start -->
+        <div class="footer_section layout_padding">
+            <div class="container">
+                <div class="footer_logo"><a href="index.html"><img src="images/footer-logo.png"></a></div>
+                <div class="input_bt">
+                    <input type="text" class="mail_bt" placeholder="Your Email" name="Your Email">
+                    <span class="subscribe_bt" id="basic-addon2"><a href="#">Subscribe</a></span>
+                </div>
+
+                <div class="location_main">Help Line  Number : <a href="#">+1 1800 1200 1200</a></div>
+            </div>
+        </div>
+        <!-- footer section end -->
+        <!-- copyright section start -->
+        <div class="copyright_section">
+            <div class="container">
+                <p class="copyright_text">© 2020 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
+            </div>
+        </div>
+        <!-- copyright section end -->
+        <!-- Javascript files-->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/jquery-3.0.0.min.js"></script>
+        <script src="js/plugin.js"></script>
+        <!-- sidebar -->
+        <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+        <script src="js/custom.js"></script>
+        <script>
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "250px";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+            }
+        </script>
 </body>
 </html>

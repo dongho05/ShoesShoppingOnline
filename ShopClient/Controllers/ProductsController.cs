@@ -340,5 +340,19 @@ namespace ShopClient.Controllers
             return Ok(new { count = files.Count, size, filePaths });
         }
 
+        public async Task<ActionResult> SearchProduct()
+        {
+            var request = Request.Form["name_product_searching"];
+            var listProducs = GetProducts().Result.ToList();
+            listProducs = listProducs.Where(x => x.ProductName.ToLower().Contains(request.ToString().ToLower())).ToList();
+
+            var listBrand = GetBrands();
+            var listCategory = GetCategories();
+            ViewData["listBrand"] = listBrand.Result.ToList();
+            ViewData["listCategory"] = listCategory.Result.ToList();
+
+            return View("Index", listProducs);
+        }
+
     }
 }

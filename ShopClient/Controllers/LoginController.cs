@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RestSharp;
 using ShopClient.DTO.Request.Login;
+using ShopClient.DTO.Request.Users;
 using System.Text.Json;
 
 namespace ShopClient.Controllers
@@ -44,6 +46,11 @@ namespace ShopClient.Controllers
                 if (response.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     HttpContext.Session.SetString("AuthToken", response.Content.ToString());
+
+                    var currentUser = await GetCurrentUser();
+                    var currentUserJson = JsonConvert.SerializeObject(currentUser);
+                    HttpContext.Session.SetString("currentuser", currentUserJson);
+
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -57,6 +64,26 @@ namespace ShopClient.Controllers
 
 
             return Ok("Tai khoan hoac mat khau ban nhap sai !!!");
+        }
+
+        public async Task<UserRequest> GetCurrentUser()
+        {
+            if (HttpContext.Session.GetString("AuthToken") != null)
+            {
+
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+
+
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/get-current-user", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var user = JsonConvert.DeserializeObject<UserRequest>(response.Content);
+                return user;
+            }
+            return null;
         }
 
     }

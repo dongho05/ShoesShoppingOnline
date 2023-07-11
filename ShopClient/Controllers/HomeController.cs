@@ -30,6 +30,21 @@ namespace ShopClient.Controllers
                 var response = await client.ExecuteAsync(requesrUrl);
                 var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
 
+                var session = HttpContext.Session.GetString("currentuser");
+                if (session != null)
+                {
+                    var currentUser = JsonConvert.DeserializeObject<User>(session);
+                    ViewData["Name"] = currentUser.FullName;
+
+                }
+
+                var saledProduct = GetTopProductIsSaled().Result.ToList();
+
+                var productsBuyMost = GetProductsBuyMost().Result.ToList();
+
+                ViewData["saledProduct"] = saledProduct;
+                ViewData["productsBuyMost"] = productsBuyMost;
+
                 return View(products);
             }
             catch (Exception)
@@ -38,16 +53,42 @@ namespace ShopClient.Controllers
                 throw;
             }
         }
-        public async Task<List<Category>> GetCategories()
+
+        public async Task<List<Product>> GetTopProductIsSaled()
+        {
+            var list = GetProducts().Result.ToList();
+            list = list.Where(x => x.IsSaled == true).Take(3).ToList();
+            return list;
+        }
+
+        public async Task<List<Product>> GetProductsBuyMost()
+        {
+            var orderDs = GetOrderDetails().Result.ToList();
+            var products = GetProducts().Result.ToList();
+
+            var productsBuyMost = orderDs.GroupBy(d => d.ProductId).Select(g => new
+            {
+                ProductId = g.Key,
+                TotalQuantity = g.Sum(d => d.Quantity)
+            }).OrderByDescending(d => d.TotalQuantity).ToList();
+
+            var result = productsBuyMost.Join(products, p => p.ProductId, prod => prod.ProductId, (p, prod) => new Product
+            {
+                ProductId = p.ProductId,
+                ProductName = prod.ProductName,
+            }).ToList();
+            return result;
+        }
+        public async Task<List<Product>> GetProducts()
         {
             try
             {
                 RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Categories", RestSharp.Method.Get);
+                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
                 requesrUrl.AddHeader("content-type", "application/json");
                 var response = await client.ExecuteAsync(requesrUrl);
-                var list = JsonConvert.DeserializeObject<List<Category>>(response.Content);
-                return list;
+                var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
+                return products;
             }
             catch (Exception)
             {
@@ -56,16 +97,16 @@ namespace ShopClient.Controllers
             }
         }
 
-        public async Task<List<Brand>> GetBrands()
+        public async Task<List<OrderDetail>> GetOrderDetails()
         {
             try
             {
                 RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Brands", RestSharp.Method.Get);
+                var requesrUrl = new RestRequest($"api/OrderDetails", RestSharp.Method.Get);
                 requesrUrl.AddHeader("content-type", "application/json");
                 var response = await client.ExecuteAsync(requesrUrl);
-                var list = JsonConvert.DeserializeObject<List<Brand>>(response.Content);
-                return list;
+                var orderDs = JsonConvert.DeserializeObject<List<OrderDetail>>(response.Content);
+                return orderDs;
             }
             catch (Exception)
             {

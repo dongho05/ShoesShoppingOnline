@@ -1,9 +1,13 @@
-﻿namespace ShoesShoppingOnline.Models
+﻿using System;
+using System.Collections.Generic;
+
+namespace ShoesShoppingOnline.Models
 {
     public partial class Product
     {
         public Product()
         {
+            Carts = new HashSet<Cart>();
             OrderDetails = new HashSet<OrderDetail>();
         }
 
@@ -20,7 +24,8 @@
         public bool? IsActivated { get; set; }
 
         public virtual Brand Brand { get; set; } = null!;
-        public virtual Category? Category { get; set; }
+        public virtual Category Category { get; set; } = null!;
+        public virtual ICollection<Cart> Carts { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
