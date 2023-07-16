@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RestSharp;
-using ShoesShoppingOnline.Models;
 using ShopClient.DTO.Request.Products;
+using ShopClient.Models;
 using System.Net.Http.Headers;
 
 namespace ShopClient.Controllers
@@ -94,6 +94,7 @@ namespace ShopClient.Controllers
             ViewData["listBrand"] = listBrand.Result.ToList();
             ViewData["listCategory"] = listCategory.Result.ToList();
             ViewData["currentPage"] = currentPage;
+
 
             return View(products);
         }

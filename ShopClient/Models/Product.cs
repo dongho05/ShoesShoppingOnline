@@ -1,4 +1,4 @@
-﻿namespace ShoesShoppingOnline.Models
+﻿namespace ShopClient.Models
 {
     public partial class Product
     {

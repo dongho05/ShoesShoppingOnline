@@ -1,4 +1,7 @@
-﻿namespace ShopClient
+﻿using AspNetCoreHero.ToastNotification;
+using AspNetCoreHero.ToastNotification.Extensions;
+
+namespace ShopClient
 {
     public class Program
     {
@@ -8,6 +11,19 @@
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+
+            // add toast notification
+
+            builder.Services.AddNotyf(config =>
+            {
+                config.DurationInSeconds = 5;
+                config.IsDismissable = true;
+                config.Position = NotyfPosition.TopRight;
+            });
+
+
+
             builder.Services.AddDistributedMemoryCache();           // Đăng ký dịch vụ lưu cache trong bộ nhớ (Session sẽ sử dụng nó)
             builder.Services.AddSession(cfg =>
             {                    // Đăng ký dịch vụ Session
@@ -26,6 +42,10 @@
             app.UseRouting();
 
             app.UseAuthorization();
+
+            //app.UseNToastNotify();
+
+            app.UseNotyf();
 
             app.UseSession();
 

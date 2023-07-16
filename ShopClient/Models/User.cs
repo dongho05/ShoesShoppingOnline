@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ShoesShoppingOnline.Models
+﻿namespace ShopClient.Models
 {
     public partial class User
     {

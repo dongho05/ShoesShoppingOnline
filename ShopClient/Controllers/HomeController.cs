@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
-using ShoesShoppingOnline.Models;
 using ShopClient.Models;
 using System.Diagnostics;
 

@@ -1,4 +1,7 @@
-﻿<section class="">
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<section class="">
     <div class="container">
         <div class="row">
             <!-- sidebar -->
@@ -180,7 +183,7 @@
                                     </div>
                                     <p class="card-text">@item.ProductName</p>
                                     <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                        <a asp-controller="Cart" asp-action="Index" class="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId ="@item.ProductId" class="btn btn-primary shadow-0 me-1">Add to cart</a>
                                     </div>
                                 </div>
                             </div>

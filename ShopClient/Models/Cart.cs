@@ -1,6 +1,4 @@
-﻿using ShoesShoppingOnline.Models;
-
-namespace ShopClient.Models
+﻿namespace ShopClient.Models
 {
     public partial class Cart
     {
