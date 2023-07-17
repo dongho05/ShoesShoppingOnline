@@ -149,7 +149,7 @@
             <!-- content -->
             <div class="col-lg-9">
                 <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
-                    <strong class="d-block py-2">32 Items found </strong>
+                    @*<strong class="d-block py-2">32 Items found </strong>*@
                     <div class="ms-auto">
                         <select class="form-select d-inline-block w-auto border pt-1">
                             <option value="0">Best match</option>
@@ -158,12 +158,17 @@
                             <option value="3">Randomly</option>
                         </select>
                         <div class="btn-group shadow-0 border">
-                            <a href="#" class="btn btn-light" title="List view">
-                                <i class="fa fa-bars fa-lg"></i>
+                            @if (ViewBag.Role == 1)
+                            {
+                                <a asp-controller="Products" asp-action="Create" class="btn btn-primary shadow-0 me-1">Create product</a>
+                            }
+
+                            @*<a href="#" class="btn btn-light" title="List view">
+                            <i class="fa fa-bars fa-lg"></i>
                             </a>
                             <a href="#" class="btn btn-light active" title="Grid view">
-                                <i class="fa fa-th fa-lg"></i>
-                            </a>
+                            <i class="fa fa-th fa-lg"></i>
+                            </a>*@
                         </div>
                     </div>
                 </header>
@@ -187,6 +192,7 @@
                                         @if (ViewBag.Role == 1)
                                         {
                                             <a asp-controller="Products" asp-action="Edit" asp-route-productId="@item.ProductId" class="btn btn-primary shadow-0 me-1">Edit</a>
+                                            <a asp-controller="Products" asp-action="Delete" asp-route-productId="@item.ProductId" class="btn btn-danger shadow-0 me-1">Delete</a>
                                         }
                                     </div>
 

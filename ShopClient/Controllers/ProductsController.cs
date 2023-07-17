@@ -275,13 +275,17 @@ namespace ShopClient.Controllers
                 requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    _toastNotification.Success("Thêm sản phẩm thành công !");
+                }
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Products");
         }
 
         // GET: ProductsController/Edit/5
@@ -354,7 +358,11 @@ namespace ShopClient.Controllers
                 };
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
-                _toastNotification.Success("Cập nhật sản phẩm thành công !");
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    _toastNotification.Success("Cập nhật sản phẩm thành công !");
+                }
+
 
             }
             catch (Exception)
@@ -362,28 +370,34 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Products");
         }
 
-        // GET: ProductsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+
 
         // POST: ProductsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int productId)
         {
+            var token = HttpContext.Session.GetString("AuthToken");
             try
             {
-                return RedirectToAction(nameof(Index));
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Delete);
+                requesrUrl.AddHeader("content-type", "application/json");
+
+                var response = await client.ExecuteAsync(requesrUrl);
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    _toastNotification.Success("Xóa sản phẩm thành công !");
+                }
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+
+                throw;
             }
+            return RedirectToAction("Index", "Products");
         }
 
         [HttpPost("FileUpload")]
