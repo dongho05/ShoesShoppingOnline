@@ -34,6 +34,7 @@ namespace ShopClient.Controllers
                 {
                     var currentUser = JsonConvert.DeserializeObject<User>(session);
                     ViewData["Name"] = currentUser.FullName;
+                    ViewData["Role"] = currentUser.RoleId;
 
                 }
 

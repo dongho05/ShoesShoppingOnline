@@ -73,7 +73,7 @@
                             <div class="input-group">
                                 <input type="text" id="name_product_searching" name="name_product_searching" class="form-control" placeholder="Search product you want">
                                 <div class="input-group-append">
-                                    
+
                                     <input class="btn btn-secondary" type="submit" value="Search" />
                                 </div>
                             </div>
@@ -110,9 +110,12 @@
                                             @ViewBag.Name
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Profile</a>
                                             <a class="dropdown-item" href="#">Another action</a>
-                                            <a class="dropdown-item" href="#">Something else here</a>
+                                            @if (ViewBag.Role == 1)
+                                            {
+                                                <a class="dropdown-item" href="Dashboard">Dashboard</a>
+                                            }
                                         </div>
                                     </div>
                                 }
@@ -182,7 +185,6 @@
                                             <p class="price_text">Price  <span style="color: #262626;">$ @(item.UnitPrice - (item.UnitPrice * item.Discount) / 100)</span></p>
                                             <div class="tshirt_img"><img src="@item.ImageProduct"></div>
                                             <div class="btn_main">
-                                                <div class="buy_bt"><a href="#">Buy Now</a></div>
                                                 <div class="seemore_bt"><a asp-controller="Products" asp-action="Details" asp-route-id="@item.ProductId">See More</a></div>
                                             </div>
                                         </div>

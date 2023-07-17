@@ -68,7 +68,7 @@
                                             {
                                                 bool isChecked = item.CategoryId == ViewBag.categoryId;
                                                 <div class="form-check">
-                                                    
+
                                                     <input class="form-check-input" type="checkbox" id="CategoryId" name="CategoryId" value="@item.CategoryId" @(isChecked ? "checked":"") />
                                                     <label class="form-check-label" for="flexCheckChecked1">@item.CategoryName</label>
                                                     <span class="badge badge-secondary float-end">120</span>
@@ -107,14 +107,14 @@
                                                     Max
                                                 </p>
                                                 <div class="form-outline">
-                                                    <input type="number" id="MaxPrice" name="MaxPrice" class="form-control" value="@ViewBag.MaxPrice"/>
+                                                    <input type="number" id="MaxPrice" name="MaxPrice" class="form-control" value="@ViewBag.MaxPrice" />
                                                     <label class="form-label" for="typeNumber">$1,0000</label>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn btn-white w-100 border border-secondary" value="Apply"/>
+                                <input type="submit" class="btn btn-white w-100 border border-secondary" value="Apply" />
                             </div>
                         </form>
                         <div class="accordion-item">
@@ -183,8 +183,13 @@
                                     </div>
                                     <p class="card-text">@item.ProductName</p>
                                     <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId ="@item.ProductId" class="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@item.ProductId" class="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                        @if (ViewBag.Role == 1)
+                                        {
+                                            <a asp-controller="Products" asp-action="Edit" asp-route-productId="@item.ProductId" class="btn btn-primary shadow-0 me-1">Edit</a>
+                                        }
                                     </div>
+
                                 </div>
                             </div>
                         </div>

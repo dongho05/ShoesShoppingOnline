@@ -153,7 +153,9 @@ namespace ShopClient.Controllers
 
             _toastNotification.Success("Thêm sản phẩm thành công !");
 
-            return RedirectToAction("Index", "Products");
+            //return lại chính trang đã nhấn add to cart
+            string refererUrl = Request.Headers["Referer"].ToString();
+            return Redirect(refererUrl);
         }
         public async Task<List<CartRequest>> GetCarts()
         {

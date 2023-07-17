@@ -1,6 +1,6 @@
 ﻿@model Product
 
-<form enctype="multipart/form-data" asp-action="Create">
+<form enctype="multipart/form-data" asp-action="Edit">
     <section class="h-100 bg-light">
         <div class="container py-5 h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
@@ -10,48 +10,17 @@
 
                             <div class="col-xl-6">
                                 <div class="card-body p-md-5 text-black">
-                                    <h3 class="mb-5 text-uppercase">Add a new product</h3>
-
-                                    @*<div class="row">
-                                    <div class="col-md-6 mb-4">
-                                    <div class="form-outline">
-                                    <input type="text" id="form3Example1m" class="form-control form-control-lg" />
-                                    <label class="form-label" for="form3Example1m">First name</label>
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                    <div class="form-outline">
-                                    <input type="text" id="form3Example1n" class="form-control form-control-lg" />
-                                    <label class="form-label" for="form3Example1n">Last name</label>
-                                    </div>
-                                    </div>
-                                    </div>
-
-                                    <div class="row">
-                                    <div class="col-md-6 mb-4">
-                                    <div class="form-outline">
-                                    <input type="text" id="form3Example1m1" class="form-control form-control-lg" />
-                                    <label class="form-label" for="form3Example1m1">Mother's name</label>
-                                    </div>
-                                    </div>
-                                    <div class="col-md-6 mb-4">
-                                    <div class="form-outline">
-                                    <input type="text" id="form3Example1n1" class="form-control form-control-lg" />
-                                    <label class="form-label" for="form3Example1n1">Father's name</label>
-                                    </div>
-                                    </div>
-                                    </div>*@
-
+                                    <h3 class="mb-5 text-uppercase">Update product</h3>
+                                    <input type="hidden" asp-for="ProductId" value="@Model.ProductId"/>
                                     <div class="form-outline mb-4">
-                                        <input asp-for="ProductName" type="text" id="ProductName" class="form-control form-control-lg" />
+                                        <input asp-for="ProductName" type="text" id="ProductName" class="form-control form-control-lg" value="@Model.ProductName" />
                                         <label class="form-label">Product Name</label>
                                     </div>
 
-                                    @*<form method="post" enctype="multipart/form-data" asp-controller="Products" asp-action="Create">*@
                                     <div class="form-outline mb-4">
                                         <div>
-
-                                            <input class="form-control form-control-lg" id="formFileLg" asp-for="ImageProduct" name="files" type="file" multiple />
+                                            <input type="text" asp-for="ImageProduct" class="form-control mt-2" readonly value="@Model.ImageProduct">
+                                            <input class="form-control form-control-lg" id="formFileLg"  name="files" type="file" multiple/>
                                             <div class="small text-muted mt-2">
                                                 Upload image product or any other relevant file. Max file
                                                 size 50 MB
@@ -63,16 +32,12 @@
                                             <h6 class="form-label">Upload image product</h6>
 
                                         </div>
-                                        @*<div class="form-label">
-                                        <input type="submit" value="Upload" />
-                                        </div>*@
                                     </div>
-                                    @*</form>*@
 
                                     <div class="form-outline mb-4">
                                         <div>
 
-                                            <textarea asp-for="Describe" class="form-control form-control-lg" rows="3" placeholder="Describe about product"></textarea>
+                                            <textarea asp-for="Describe" class="form-control form-control-lg" rows="3" placeholder="Describe about product">@Model.Describe</textarea>
 
                                         </div>
                                         <div>
@@ -85,14 +50,13 @@
                                     <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
 
                                         <h6 class="mb-0 me-4">Is saled? : </h6>
-
                                         <div class="form-check form-check-inline mb-0 me-4">
-                                            <input asp-for="IsSaled" class="form-check-input" type="radio" name="IsSaled" value="True" />
+                                            <input asp-for="IsSaled" class="form-check-input" type="radio" name="IsSaled" value="True" checked="@Model.IsSaled" />
                                             <label class="form-check-label">Yes</label>
                                         </div>
 
                                         <div class="form-check form-check-inline mb-0 me-4">
-                                            <input asp-for="IsSaled" class="form-check-input" type="radio" name="IsSaled" value="False" />
+                                            <input asp-for="IsSaled" class="form-check-input" type="radio" name="IsSaled" value="False" checked="@Model.IsSaled" />
                                             <label class="form-check-label">No</label>
                                         </div>
 
@@ -103,12 +67,12 @@
                                         <h6 class="mb-0 me-4">Is activated? : </h6>
 
                                         <div class="form-check form-check-inline mb-0 me-4">
-                                            <input asp-for="IsActivated" class="form-check-input" type="radio" name="IsActivated" value="True" />
+                                            <input asp-for="IsActivated" class="form-check-input" type="radio" name="IsActivated" value="True" checked="@Model.IsActivated" />
                                             <label class="form-check-label">Yes</label>
                                         </div>
 
                                         <div class="form-check form-check-inline mb-0 me-4">
-                                            <input asp-for="IsActivated" class="form-check-input" type="radio" name="IsActivated" value="False" />
+                                            <input asp-for="IsActivated" class="form-check-input" type="radio" name="IsActivated" value="False" checked="@Model.IsActivated" />
                                             <label class="form-check-label">No</label>
                                         </div>
                                     </div>
@@ -116,7 +80,12 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
 
-                                            <select class="form-control form-control-lg" asp-for="BrandId" asp-items="@ViewBag.BrandId"></select>
+                                            <select class="form-control form-control-lg" asp-for="BrandId" asp-items="@ViewBag.BrandId">
+                                                @foreach (var item in ViewBag.BrandId)
+                                                {
+                                                    <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                                }
+                                            </select>
                                             <div>
 
                                                 <h6 class="form-label">Brand</h6>
@@ -126,7 +95,12 @@
 
                                         <div class="col-md-6 mb-4">
 
-                                            <select class="form-control form-control-lg" asp-for="CategoryId" asp-items="@ViewBag.CategoryId"></select>
+                                            <select class="form-control form-control-lg" asp-for="CategoryId" asp-items="@ViewBag.CategoryId">
+                                                @foreach (var item in ViewBag.CategoryId)
+                                                {
+                                                    <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                                }
+                                            </select>
                                             <div>
 
                                                 <h6 class="form-label">Category</h6>
@@ -136,17 +110,17 @@
                                     </div>
 
                                     <div class="form-outline mb-4">
-                                        <input type="text" asp-for="Discount" class="form-control form-control-lg" />
+                                        <input type="text" asp-for="Discount" class="form-control form-control-lg" value="@Model.Discount" />
                                         <label class="form-label" for="form3Example9">Discount</label>
                                     </div>
 
                                     <div class="form-outline mb-4">
-                                        <input type="text" asp-for="UnitPrice" class="form-control form-control-lg" />
+                                        <input type="text" asp-for="UnitPrice" class="form-control form-control-lg" value="@Model.UnitPrice"/>
                                         <label class="form-label" for="form3Example90">Unit price</label>
                                     </div>
 
                                     <div class="form-outline mb-4">
-                                        <input type="text" asp-for="UnitInStock" class="form-control form-control-lg" />
+                                        <input type="text" asp-for="UnitInStock" class="form-control form-control-lg" value="@Model.UnitInStock" />
                                         <label class="form-label" for="form3Example99">Unit in stock</label>
                                     </div>
 

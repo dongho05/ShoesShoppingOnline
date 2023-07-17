@@ -25,6 +25,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (ViewBag.Name == null)
+                        {
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Login">Login</a>
+                            </li>
+                        }
+                        @if (ViewBag.Name != null)
+                        {
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Logout">Logout(@ViewBag.Name)</a>
+                            </li>
+                        }
+                        @if(ViewBag.Role == 1)
+                        {
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Dashboard">Dashboard</a>
+                            </li>
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Table">Table</a>
+                            </li>
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Billing">Billing</a>
+                            </li>
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Products" >Products</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

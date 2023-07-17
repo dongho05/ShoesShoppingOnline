@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RestSharp;
@@ -13,13 +14,15 @@ namespace ShopClient.Controllers
         private readonly HttpClient client = null;
         private readonly IConfiguration configuration;
         private string ApiPort = "";
+        private readonly INotyfService _toastNotification;
 
-        public ProductsController(IConfiguration configuration)
+        public ProductsController(IConfiguration configuration, INotyfService toastNotification)
         {
             client = new HttpClient();
             var contentType = new MediaTypeWithQualityHeaderValue("application/json");
             client.DefaultRequestHeaders.Accept.Add(contentType);
             this.configuration = configuration;
+            _toastNotification = toastNotification;
             ApiPort = configuration.GetSection("ApiHost").Value;
         }
 
@@ -79,6 +82,15 @@ namespace ShopClient.Controllers
         // GET: ProductsController
         public async Task<ActionResult> Index(int currentPage)
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
@@ -273,24 +285,84 @@ namespace ShopClient.Controllers
         }
 
         // GET: ProductsController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int productId)
         {
-            return View();
+            RestClient client = new RestClient(ApiPort);
+            var requesrUrl = new RestRequest("api/Products/" + productId, RestSharp.Method.Get);
+            requesrUrl.AddHeader("content-type", "application/json");
+            var response = await client.ExecuteAsync(requesrUrl);
+            var product = JsonConvert.DeserializeObject<Product>(response.Content);
+
+            var listBrand = GetBrands();
+            var listCategory = GetCategories();
+            ViewData["BrandId"] = new SelectList(listBrand.Result.ToList(), "BrandId", "BrandName");
+            ViewData["CategoryId"] = new SelectList(listCategory.Result.ToList(), "CategoryId", "CategoryName");
+
+            return View(product);
         }
 
         // POST: ProductsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int productId, List<IFormFile> files, [Bind("ProductId,ProductName,ImageProduct,Describe,CategoryId,BrandId,UnitPrice,UnitInStock,Discount,IsSaled,IsActivated")] ProductRequest request)
         {
+            var filePaths = new List<string>();
+            if (files.Count > 0)
+            {
+                long size = files.Sum(f => f.Length);
+
+                foreach (var formFile in files)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        var fileName = formFile.FileName;
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await formFile.CopyToAsync(stream);
+                        }
+
+                        filePaths.Add("/images/" + fileName); // Store the relative path to the file
+
+                    }
+                }
+            }
+            else
+            {
+                filePaths.Add(request.ImageProduct);
+            }
+
+            var token = HttpContext.Session.GetString("AuthToken");
             try
             {
-                return RedirectToAction(nameof(Index));
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Put);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var body = new Product
+                {
+                    ProductName = request.ProductName,
+                    Describe = request.Describe,
+                    BrandId = request.BrandId,
+                    CategoryId = request.CategoryId,
+                    Discount = request.Discount,
+                    ImageProduct = filePaths[0],
+                    IsActivated = request.IsActivated,
+                    IsSaled = request.IsSaled,
+                    UnitInStock = request.UnitInStock,
+                    UnitPrice = request.UnitPrice,
+                };
+                requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
+                var response = await client.ExecuteAsync(requesrUrl);
+                _toastNotification.Success("Cập nhật sản phẩm thành công !");
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+
+                throw;
             }
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: ProductsController/Delete/5

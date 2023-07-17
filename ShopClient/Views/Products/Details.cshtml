@@ -1,4 +1,4 @@
-﻿@model             Product
+﻿@model Product
 <!-- content -->
 <section class="py-5">
     <div class="container">
@@ -46,7 +46,7 @@
                         4.5
                         </span>
                         </div>*@
-                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span>
+                        <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>@Model.UnitInStock products</span>
                         <span class="text-success ms-2">In stock</span>
                     </div>
 
@@ -67,21 +67,8 @@
                     </div>
 
                     <hr />
-
-                    <form asp-controller="Cart" asp-action="Index">
-                        <input type="hidden" name="ProductId" value="@Model.ProductId" />
-                        <div class="row mb-4">
-                            <!-- col.// -->
-                            <div class="col-md-4 col-6 mb-3">
-                                <label class="mb-2 d-block">Quantity</label>
-                                <div class="input-group mb-3" style="width: 300px;">
-                                    <input type="text" id="Quantity" name="Quantity" class="form-control text-center border border-secondary" placeholder="Enter quantity you want to buy" aria-label="Example text with button addon" aria-describedby="button-addon1" />
-                                </div>
-                            </div>
-                        </div>
-                        <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Buy Now </a>
-                        <input type="submit" class="btn btn-warning shadow-0" value="Add to cart" />
-                    </form>
+                    <a href="#" class="btn btn-primary shadow-0"> <i class="me-1 fa fa-shopping-basket"></i> Buy Now </a>
+                    <a asp-controller="Cart" asp-action="AddToCart" asp-route-productId="@Model.ProductId" class="btn btn-warning shadow-0"> Add to cart </a>
                 </div>
             </main>
         </div>
