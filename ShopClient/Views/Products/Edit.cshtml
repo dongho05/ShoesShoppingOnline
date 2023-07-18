@@ -80,7 +80,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-4">
 
-                                            <select class="form-control form-control-lg" asp-for="BrandId" asp-items="@ViewBag.BrandId">
+                                            <select class="form-control form-control-lg" asp-for="BrandId" >
                                                 @foreach (var item in ViewBag.BrandId)
                                                 {
                                                     <option value="@item.Value" selected="@item.Selected">@item.Text</option>
@@ -95,7 +95,7 @@
 
                                         <div class="col-md-6 mb-4">
 
-                                            <select class="form-control form-control-lg" asp-for="CategoryId" asp-items="@ViewBag.CategoryId">
+                                            <select class="form-control form-control-lg" asp-for="CategoryId" >
                                                 @foreach (var item in ViewBag.CategoryId)
                                                 {
                                                     <option value="@item.Value" selected="@item.Selected">@item.Text</option>

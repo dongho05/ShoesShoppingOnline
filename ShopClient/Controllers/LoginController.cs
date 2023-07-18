@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RestSharp;
 using ShopClient.DTO.Request.Login;
@@ -12,9 +13,11 @@ namespace ShopClient.Controllers
         private readonly HttpClient client = null;
         private readonly IConfiguration configuration;
         private string ApiPort = "";
-        public LoginController(IConfiguration configuration)
+        private readonly INotyfService _toastNotification;
+        public LoginController(IConfiguration configuration, INotyfService toastNotification)
         {
             this.configuration = configuration;
+            _toastNotification = toastNotification;
             ApiPort = configuration.GetSection("ApiHost").Value;
         }
         // GET: LoginController
@@ -66,6 +69,7 @@ namespace ShopClient.Controllers
             return Ok("Tai khoan hoac mat khau ban nhap sai !!!");
         }
 
+
         public async Task<UserRequest> GetCurrentUser()
         {
             if (HttpContext.Session.GetString("AuthToken") != null)
@@ -85,6 +89,9 @@ namespace ShopClient.Controllers
             }
             return null;
         }
+
+
+
 
     }
 }
