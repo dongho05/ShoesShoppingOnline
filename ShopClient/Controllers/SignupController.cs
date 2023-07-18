@@ -30,6 +30,20 @@ namespace ShopClient.Controllers
         [HttpPost("Signup")]
         public async Task<ActionResult> Signup([Bind("UserId,UserName,Password,FullName,AvatarImage,Address,BirthDay,Gender,Email,Phone,RoleId")] UserRequest request)
         {
+            var repeatPass = Request.Form["repeatpassword"];
+            if (!String.IsNullOrEmpty(repeatPass))
+            {
+                if (!repeatPass.Equals(request.Password))
+                {
+                    _toastNotification.Error("Mật khẩu thứ 2 phải khớp với mật khẩu thứ nhất !");
+                    return RedirectToAction("Index", "Signup");
+                }
+            }
+            else
+            {
+                _toastNotification.Error("Hãy nhập tất cả các trường !");
+                return RedirectToAction("Index", "Signup");
+            }
             try
             {
                 RestClient client = new RestClient(ApiPort);

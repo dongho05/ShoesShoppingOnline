@@ -1,4 +1,8 @@
-﻿
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
 
 <section class="">
     <div class="container">
@@ -14,7 +18,7 @@
                 <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
                     <div class="ms-auto">
                         <div class="btn-group shadow-0 border">
-                            <a asp-controller="Categories" asp-action="Create" class="btn btn-primary shadow-0 me-1">Create category</a>
+                            <a asp-controller="Signup" asp-action="Index" class="btn btn-primary shadow-0 me-1">Create user</a>
                         </div>
                     </div>
                 </header>
@@ -24,14 +28,20 @@
                     {
                         <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
                             <div class="card w-100 my-2 shadow-2-strong">
-                                <p class="card-text">@item.CategoryName</p>
+                                <a asp-controller="Users" asp-action="Details" asp-route-userId="@item.UserId">
+                                    <img src="@item.AvatarImage" class="card-img-top" />
+                                </a>
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex flex-row">
+                                        <h5 class="mb-1 me-1"></h5>
+                                        <span class="text-danger"><s></s></span>
                                     </div>
+                                    <p class="card-text">@item.FullName</p>
                                     <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                        <a asp-controller="Categories" asp-action="Edit" asp-route-categoryId="@item.CategoryId" class="btn btn-primary shadow-0 me-1">Edit</a>
-                                        <a asp-controller="Categories" asp-action="Delete" asp-route-categoryId="@item.CategoryId" class="btn btn-danger shadow-0 me-1">Delete</a>
+                                        <a asp-controller="Users" asp-action="Edit" asp-route-userId="@item.UserId" class="btn btn-primary shadow-0 me-1">Edit</a>
+                                        <a asp-controller="Users" asp-action="Delete" asp-route-userId="@item.UserId" class="btn btn-danger shadow-0 me-1">Delete</a>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

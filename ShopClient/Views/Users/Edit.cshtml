@@ -1,0 +1,124 @@
+﻿@model User
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<form enctype="multipart/form-data" asp-action="Edit">
+    <section class="h-100 bg-light">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col">
+                    <div class="card card-registration my-4">
+                        <div class="row g-0">
+
+                            <div class="col-xl-6">
+                                <div class="card-body p-md-5 text-black">
+                                    <h3 class="mb-5 text-uppercase">Update user</h3>
+                                    <input type="hidden" asp-for="UserId" value="@Model.UserId" />
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="UserName" type="text" id="UserName" class="form-control form-control-lg" value="@Model.UserName" />
+                                        <label class="form-label">User Name</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FullName" type="text" id="FullName" class="form-control form-control-lg" value="@Model.FullName" />
+                                        <label class="form-label">Full Name</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="Password" type="text" id="Password" class="form-control form-control-lg" value="@Model.Password" />
+                                        <label class="form-label">Password</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <div>
+                                            <input type="text" asp-for="AvatarImage" class="form-control mt-2" readonly value="@Model.AvatarImage">
+                                            <input class="form-control form-control-lg" id="formFileLg" name="files" type="file" multiple />
+                                            <div class="small text-muted mt-2">
+                                                Upload image product or any other relevant file. Max file
+                                                size 50 MB
+                                            </div>
+
+                                        </div>
+                                        <div>
+
+                                            <h6 class="form-label">Upload image product</h6>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="Address" type="text" id="Address" class="form-control form-control-lg" value="@Model.Address" />
+                                        <label class="form-label">Address</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="BirthDay" type="datetime-local" id="BirthDay" class="form-control form-control-lg"
+                                               value="@(Model.BirthDay.HasValue ? Model.BirthDay.Value.ToString("yyyy-MM-ddTHH:mm") : "")" />
+                                        <label class="form-label">BirthDay</label>
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="Email" type="text" id="Email" class="form-control form-control-lg" value="@Model.Email" />
+                                        <label class="form-label">Email</label>
+                                    </div>
+
+                                    <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
+
+                                        <h6 class="mb-0 me-4">Gender : </h6>
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input asp-for="Gender" class="form-check-input" type="radio" name="Gender" value="True" checked="@(Model.Gender ? "checked" : null)" />
+                                            <label class="form-check-label">Male</label>
+                                        </div>
+
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input asp-for="Gender" class="form-check-input" type="radio" name="Gender" value="False" checked="@(Model.Gender ? null : "checked")" />
+                                            <label class="form-check-label">Female</label>
+                                        </div>
+
+
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-4">
+
+                                            <select class="form-control form-control-lg" asp-for="RoleId">
+                                                @foreach (var item in ViewBag.RoleId)
+                                                {
+                                                    <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                                }
+                                            </select>
+                                            <div>
+
+                                                <h6 class="form-label">Role</h6>
+
+                                            </div>
+                                        </div>
+
+                                        
+                                    </div>
+
+                                    <div class="form-outline mb-4">
+                                        <input type="text" asp-for="Phone" class="form-control form-control-lg" value="@Model.Phone" />
+                                        <label class="form-label" for="form3Example9">Phone</label>
+                                    </div>
+
+                                    
+
+
+                                    <div class="d-flex justify-content-end pt-3">
+                                        <button type="button" class="btn btn-light btn-lg">Reset all</button>
+                                        <input type="submit" value="Update" class="btn btn-success btn-lg" />
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </section>
+</form>

@@ -18,7 +18,23 @@ namespace ShopClient.Controllers
             this.configuration = configuration;
             ApiPort = configuration.GetSection("ApiHost").Value;
         }
+        public async Task<User> GetUserByUserName(string userName)
+        {
+            try
+            {
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/get-user-by-username/{userName}", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var response = await client.ExecuteAsync(requesrUrl);
+                var user = JsonConvert.DeserializeObject<User>(response.Content);
+                return user;
+            }
+            catch (Exception)
+            {
 
+                throw;
+            }
+        }
         public async Task<IActionResult> Index()
         {
             try
@@ -35,6 +51,8 @@ namespace ShopClient.Controllers
                     var currentUser = JsonConvert.DeserializeObject<User>(session);
                     ViewData["Name"] = currentUser.FullName;
                     ViewData["Role"] = currentUser.RoleId;
+                    var user = GetUserByUserName(currentUser.UserName);
+                    ViewData["UserId"] = user.Result.UserId;
 
                 }
 

@@ -110,7 +110,7 @@
                                             @ViewBag.Name
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                            <a class="dropdown-item" href="#">Profile</a>
+                                            <a class="dropdown-item" asp-controller="Users" asp-action="Details" asp-route-userId="@ViewBag.UserId">Profile</a>
                                             <a class="dropdown-item" href="#">Another action</a>
                                             @if (ViewBag.Role == 1)
                                             {

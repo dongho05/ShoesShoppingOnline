@@ -4,7 +4,6 @@
     {
         public string UserName { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public string RepeatPassword { get; set; } = null!;
         public string? FullName { get; set; }
         public string? AvatarImage { get; set; }
         public string? Address { get; set; }
