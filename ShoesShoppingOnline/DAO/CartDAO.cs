@@ -35,13 +35,13 @@ namespace ShoesShoppingOnline.DAO
             }
         }
 
-        public static Cart GetCartByUserId(int id)
+        public static List<Cart> GetCartByUserId(int id)
         {
             try
             {
                 using (var connection = new ShoesShoppingOnlineContext())
                 {
-                    var category = connection.Carts.Where(x => x.UserId == id).FirstOrDefault();
+                    var category = connection.Carts.Where(x => x.UserId == id).ToList();
                     return category;
                 }
             }

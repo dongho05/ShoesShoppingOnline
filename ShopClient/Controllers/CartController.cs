@@ -23,7 +23,19 @@ namespace ShopClient.Controllers
         // GET: CartController
         public ActionResult Index()
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+                var user = GetUserByUserName(currentUser.UserName);
+                ViewData["UserId"] = user.Result.UserId;
+            }
+
             var carts = GetCarts().Result.ToList();
+
+
             if (carts != null)
             {
                 List<Product> products = new List<Product>();
@@ -34,9 +46,12 @@ namespace ShopClient.Controllers
                 var joinedData = carts.Select(c => new { Cart = c, Product = products.FirstOrDefault(p => p.ProductId == c.ProductId) })
                          .ToList();
 
+
                 ViewData["products"] = joinedData;
                 return View(carts);
             }
+            string notice = "Giỏ hàng đang trống. Hãy mua sản phẩm. ";
+            ViewData["notice"] = notice;
             return View();
         }
 
@@ -76,23 +91,23 @@ namespace ShopClient.Controllers
             }
         }
 
-        public async Task<ActionResult> SaveCartToDB(Cart cart)
-        {
-            try
-            {
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Carts", RestSharp.Method.Post);
-                requesrUrl.AddHeader("content-type", "application/json");
-                requesrUrl.AddParameter("application/json-patch+json", cart, ParameterType.RequestBody);
-                var response = await client.ExecuteAsync(requesrUrl);
-                return NoContent();
-            }
-            catch (Exception)
-            {
+        //public async Task<ActionResult> SaveCartToDB(Cart cart)
+        //{
+        //    try
+        //    {
+        //        RestClient client = new RestClient(ApiPort);
+        //        var requesrUrl = new RestRequest($"api/Carts", RestSharp.Method.Post);
+        //        requesrUrl.AddHeader("content-type", "application/json");
+        //        requesrUrl.AddParameter("application/json-patch+json", cart, ParameterType.RequestBody);
+        //        var response = await client.ExecuteAsync(requesrUrl);
+        //        return NoContent();
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-        }
+        //        throw;
+        //    }
+        //}
 
 
         public ActionResult AddToCart(int productId)
@@ -134,21 +149,21 @@ namespace ShopClient.Controllers
             var sessionCarts = JsonConvert.SerializeObject(carts);
             HttpContext.Session.SetString("Carts", sessionCarts);
 
-            var user = GetUserById(userId).Result;
-            if (user != null)
-            {
-                foreach (var item in carts)
-                {
-                    var cartItemDB = new Cart
-                    {
-                        ProductId = item.ProductId,
-                        UserId = user.UserId,
-                        Quantity = item.Quantity,
-                        UnitPrice = item.UnitPrice
-                    };
-                    SaveCartToDB(cartItemDB);
-                }
-            }
+            //var user = GetUserById(userId).Result;
+            //if (user != null)
+            //{
+            //    foreach (var item in carts)
+            //    {
+            //        var cartItemDB = new Cart
+            //        {
+            //            ProductId = item.ProductId,
+            //            UserId = user.UserId,
+            //            Quantity = item.Quantity,
+            //            UnitPrice = item.UnitPrice
+            //        };
+            //        SaveCartToDB(cartItemDB);
+            //    }
+            //}
 
 
             _toastNotification.Success("Thêm sản phẩm thành công !");
@@ -157,8 +172,10 @@ namespace ShopClient.Controllers
             string refererUrl = Request.Headers["Referer"].ToString();
             return Redirect(refererUrl);
         }
+
         public async Task<List<CartRequest>> GetCarts()
         {
+
             var session = HttpContext.Session.GetString("Carts");
             if (session != null)
             {
@@ -167,6 +184,25 @@ namespace ShopClient.Controllers
             }
             return new List<CartRequest>();
         }
+
+        //public async Task<List<Cart>> GetCartsByUserId(int userId)
+        //{
+        //    try
+        //    {
+        //        RestClient client = new RestClient(ApiPort);
+        //        var requesrUrl = new RestRequest($"api/Carts/cart-by-userId/{userId}", RestSharp.Method.Get);
+        //        requesrUrl.AddHeader("content-type", "application/json");
+        //        var response = await client.ExecuteAsync(requesrUrl);
+        //        var carts = JsonConvert.DeserializeObject<List<Cart>>(response.Content);
+        //        return carts;
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
+
 
         public async Task<Product> GetProductById(int productId)
         {
@@ -191,7 +227,7 @@ namespace ShopClient.Controllers
             var session = HttpContext.Session;
             session.Remove("Carts");
         }
-
+        [HttpGet]
         public IActionResult UpdateCart(int productid, int quantity)
         {
             // Cập nhật Cart thay đổi số lượng quantity ...

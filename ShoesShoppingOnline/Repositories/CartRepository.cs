@@ -13,7 +13,7 @@ namespace ShoesShoppingOnline.Repositories
 
         public Cart GetCartById(int id) => CartDAO.GetCartById(id);
 
-        public Cart GetCartByUserId(int id) => CartDAO.GetCartByUserId(id);
+        public List<Cart> GetCartByUserId(int id) => CartDAO.GetCartByUserId(id);
 
         public void UpdateCart(Cart cart) => CartDAO.UpdateCart(cart);
     }

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.Models;
+using ShoesShoppingOnline.Repositories;
 
 namespace ShoesShoppingOnline.Controllers
 {
@@ -14,20 +10,22 @@ namespace ShoesShoppingOnline.Controllers
     public class CartsController : ControllerBase
     {
         private readonly ShoesShoppingOnlineContext _context;
+        private readonly ICartRepository repo;
 
-        public CartsController(ShoesShoppingOnlineContext context)
+        public CartsController(ShoesShoppingOnlineContext context, ICartRepository repo)
         {
             _context = context;
+            this.repo = repo;
         }
 
         // GET: api/Carts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Cart>>> GetCarts()
         {
-          if (_context.Carts == null)
-          {
-              return NotFound();
-          }
+            if (_context.Carts == null)
+            {
+                return NotFound();
+            }
             return await _context.Carts.ToListAsync();
         }
 
@@ -35,11 +33,28 @@ namespace ShoesShoppingOnline.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Cart>> GetCart(int id)
         {
-          if (_context.Carts == null)
-          {
-              return NotFound();
-          }
+            if (_context.Carts == null)
+            {
+                return NotFound();
+            }
             var cart = await _context.Carts.FindAsync(id);
+
+            if (cart == null)
+            {
+                return NotFound();
+            }
+
+            return cart;
+        }
+
+        [HttpGet("cart-by-userId/{id}")]
+        public async Task<ActionResult<List<Cart>>> GetCartsByUserId(int id)
+        {
+            if (_context.Carts == null)
+            {
+                return NotFound();
+            }
+            var cart = repo.GetCartByUserId(id);
 
             if (cart == null)
             {
@@ -85,10 +100,10 @@ namespace ShoesShoppingOnline.Controllers
         [HttpPost]
         public async Task<ActionResult<Cart>> PostCart(Cart cart)
         {
-          if (_context.Carts == null)
-          {
-              return Problem("Entity set 'ShoesShoppingOnlineContext.Carts'  is null.");
-          }
+            if (_context.Carts == null)
+            {
+                return Problem("Entity set 'ShoesShoppingOnlineContext.Carts'  is null.");
+            }
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
 

@@ -6,7 +6,7 @@ namespace ShoesShoppingOnline.Repositories
     {
         List<Cart> GetAllCarts();
         Cart GetCartById(int id);
-        Cart GetCartByUserId(int id);
+        List<Cart> GetCartByUserId(int id);
         void AddCart(Cart cart);
         void UpdateCart(Cart cart);
         void DeleteCart(Cart cart);

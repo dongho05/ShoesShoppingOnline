@@ -53,7 +53,6 @@ namespace ShopClient.Controllers
                     ViewData["Role"] = currentUser.RoleId;
                     var user = GetUserByUserName(currentUser.UserName);
                     ViewData["UserId"] = user.Result.UserId;
-
                 }
 
                 var saledProduct = GetTopProductIsSaled().Result.ToList();
@@ -132,6 +131,7 @@ namespace ShopClient.Controllers
                 throw;
             }
         }
+
         public IActionResult Privacy()
         {
             return View();

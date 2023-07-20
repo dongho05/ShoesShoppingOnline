@@ -25,6 +25,7 @@ namespace ShoesShoppingOnline
             builder.Services.AddSingleton<IOrderRepository, OrderRepository>();
             builder.Services.AddSingleton<IOrderDetailRepository, OrderDetailRepository>();
             builder.Services.AddSingleton<IUserRepository, UserRepository>();
+            builder.Services.AddSingleton<ICartRepository, CartRepository>();
 
 
             // add configure jwt bearer
