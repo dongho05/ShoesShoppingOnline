@@ -35,33 +35,52 @@ namespace ShopClient.Controllers
 
             }
 
+            var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest($"api/Categories", RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
+            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
             var response = await client.ExecuteAsync(requesrUrl);
             var categories = JsonConvert.DeserializeObject<List<Category>>(response.Content);
 
-            ViewData["NumberOfPages"] = categories.Count / 6;
+            if (categories != null)
+            {
+                ViewData["NumberOfPages"] = categories.Count / 6;
 
-            categories = categories.Skip(6 * currentPage).Take(6).ToList();
+                categories = categories.Skip(6 * currentPage).Take(6).ToList();
 
 
-            ViewData["currentPage"] = currentPage;
+                ViewData["currentPage"] = currentPage;
 
 
-            return View(categories);
+                return View(categories);
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
+
         }
 
         // GET: ProductsController/Details/5
         public async Task<ActionResult> Details(int id)
         {
+            var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest($"api/Categories/" + id, RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
+            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
             var response = await client.ExecuteAsync(requesrUrl);
             var categorie = JsonConvert.DeserializeObject<Category>(response.Content);
+            if (categorie != null)
+            {
+                return View(categorie);
 
-            return View(categorie);
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         // GET: ProductsController/Create
@@ -78,24 +97,24 @@ namespace ShopClient.Controllers
 
 
             var token = HttpContext.Session.GetString("AuthToken");
-
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest("api/Categories", RestSharp.Method.Post);
                 requesrUrl.AddHeader("content-type", "application/json");
-                //requesrUrl.AddHeader("authorization", "Bearer " + token);
                 var body = new Category
                 {
                     CategoryName = request.CategoryName
                 };
-                var tokenAuth = "Bearer " + token;
-                //requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.Created)
                 {
                     _toastNotification.Success("Thêm sản phẩm thành công !");
+                    return RedirectToAction("Index", "Categories");
+
                 }
             }
             catch (Exception)
@@ -103,7 +122,8 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Categories");
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         // GET: ProductsController/Edit/5
@@ -124,9 +144,8 @@ namespace ShopClient.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int categoryId, [Bind("CategoryId,CategoryName")] CategoryRequest request)
         {
-
-
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
@@ -136,21 +155,24 @@ namespace ShopClient.Controllers
                 {
                     CategoryName = request.CategoryName
                 };
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Cập nhật sản phẩm thành công !");
+                    return RedirectToAction("Index", "Categories");
+
                 }
 
-
+                _toastNotification.Error("Bạn không có quyền truy cập trang này");
+                return View();
             }
             catch (Exception)
             {
 
                 throw;
             }
-            return RedirectToAction("Index", "Categories");
         }
 
 
@@ -159,16 +181,19 @@ namespace ShopClient.Controllers
         public async Task<ActionResult> Delete(int categoryId)
         {
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Categories/{categoryId}", RestSharp.Method.Delete);
                 requesrUrl.AddHeader("content-type", "application/json");
-
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Xóa sản phẩm thành công !");
+                    return RedirectToAction("Index", "Categories");
+
                 }
 
             }
@@ -177,7 +202,8 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Categories");
+            _toastNotification.Error("Bạn không có quyền xóa sản phẩm !");
+            return View("Index");
         }
     }
 }

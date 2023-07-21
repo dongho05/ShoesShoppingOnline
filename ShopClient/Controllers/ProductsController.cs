@@ -338,6 +338,7 @@ namespace ShopClient.Controllers
             }
 
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
@@ -356,11 +357,14 @@ namespace ShopClient.Controllers
                     UnitInStock = request.UnitInStock,
                     UnitPrice = request.UnitPrice,
                 };
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Cập nhật sản phẩm thành công !");
+                    return RedirectToAction("Index", "Products");
+
                 }
 
 
@@ -370,7 +374,8 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Products");
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
 
@@ -379,16 +384,19 @@ namespace ShopClient.Controllers
         public async Task<ActionResult> Delete(int productId)
         {
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Delete);
                 requesrUrl.AddHeader("content-type", "application/json");
-
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Xóa sản phẩm thành công !");
+                    return RedirectToAction("Index", "Products");
+
                 }
 
             }
@@ -397,7 +405,8 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Products");
+            _toastNotification.Error("Bạn không có quyền xóa sản phẩm !");
+            return View("Index");
         }
 
         [HttpPost("FileUpload")]

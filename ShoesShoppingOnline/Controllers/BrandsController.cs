@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShoesShoppingOnline.DTO.Request.Brands;
 using ShoesShoppingOnline.Models;
@@ -7,6 +8,7 @@ namespace ShoesShoppingOnline.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BrandsController : ControllerBase
     {
         private readonly ShoesShoppingOnlineContext _context;
@@ -17,6 +19,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // GET: api/Brands
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Brand>>> GetBrands()
         {

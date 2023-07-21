@@ -12,31 +12,37 @@
             <!-- sidebar -->
             <!-- content -->
             <div class="col-lg-9">
-                <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
-                    <div class="ms-auto">
-                        <div class="btn-group shadow-0 border">
-                            <a asp-controller="Brands" asp-action="Create" class="btn btn-primary shadow-0 me-1">Create brand</a>
+                @if (Model != null)
+                {
+                    <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
+                        <div class="ms-auto">
+                            <div class="btn-group shadow-0 border">
+                                <a asp-controller="Brands" asp-action="Create" class="btn btn-primary shadow-0 me-1">Create brand</a>
+                            </div>
                         </div>
-                    </div>
-                </header>
+                    </header>
+                }
+
 
                 <div class="row">
-                    @foreach (var item in Model)
+                    @if (Model != null)
                     {
-                        <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
-                            <div class="card w-100 my-2 shadow-2-strong">
-                                <p class="card-text">@item.BrandName</p>
-                                <div class="card-body d-flex flex-column">
-                                    <div class="d-flex flex-row">
-                                    </div>
-                                    <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                        <a asp-controller="Brands" asp-action="Edit" asp-route-brandId="@item.BrandId" class="btn btn-primary shadow-0 me-1">Edit</a>
-                                        <a asp-controller="Brands" asp-action="Delete" asp-route-brandId="@item.BrandId" class="btn btn-danger shadow-0 me-1">Delete</a>
+                        @foreach (var item in Model)
+                        {
+                            <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                                <div class="card w-100 my-2 shadow-2-strong">
+                                    <p class="card-text">@item.BrandName</p>
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex flex-row">
+                                        </div>
+                                        <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                            <a asp-controller="Brands" asp-action="Edit" asp-route-brandId="@item.BrandId" class="btn btn-primary shadow-0 me-1">Edit</a>
+                                            <a asp-controller="Brands" asp-action="Delete" asp-route-brandId="@item.BrandId" class="btn btn-danger shadow-0 me-1">Delete</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
+                        }
                     <hr />
 
                     <!-- Pagination -->
@@ -66,6 +72,8 @@
 
                         </ul>
                     </nav>
+                    }
+
                     <!-- Pagination -->
                 </div>
             </div>

@@ -30,12 +30,21 @@ namespace ShopClient.Controllers
         {
             try
             {
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Users", RestSharp.Method.Get);
                 requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var response = await client.ExecuteAsync(requesrUrl);
                 var products = JsonConvert.DeserializeObject<List<User>>(response.Content);
-                return products;
+                if (products != null)
+                {
+
+                    return products;
+                }
+                return null;
             }
             catch (Exception)
             {
@@ -74,39 +83,60 @@ namespace ShopClient.Controllers
             }
 
             var users = GetUsers().Result;
+            if (users != null)
+            {
+                ViewData["NumberOfPages"] = users.Count / 6;
 
-            ViewData["NumberOfPages"] = users.Count / 6;
+                users = users.Skip(6 * currentPage).Take(6).ToList();
 
-            users = users.Skip(6 * currentPage).Take(6).ToList();
-
-            ViewData["currentPage"] = currentPage;
-            return View(users);
+                ViewData["currentPage"] = currentPage;
+                return View(users);
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         public async Task<ActionResult> Details(int userId)
         {
+            var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
+            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
             var response = await client.ExecuteAsync(requesrUrl);
             var user = JsonConvert.DeserializeObject<User>(response.Content);
+            if (user != null)
+            {
 
-
-            return View(user);
+                return View(user);
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         public async Task<ActionResult> Edit(int userId)
         {
+            var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest("api/Users/" + userId, RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
+            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
             var response = await client.ExecuteAsync(requesrUrl);
             var user = JsonConvert.DeserializeObject<User>(response.Content);
+            if (user != null)
+            {
+                var listRole = GetRoles();
+                ViewData["RoleId"] = new SelectList(listRole.Result.ToList(), "RoleId", "RoleName");
+                return View(user);
 
-            var listRole = GetRoles();
-            ViewData["RoleId"] = new SelectList(listRole.Result.ToList(), "RoleId", "RoleName");
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
 
-            return View(user);
         }
 
         //POST: ProductsController/Edit/5
@@ -142,11 +172,13 @@ namespace ShopClient.Controllers
             }
 
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Users/{userId}", RestSharp.Method.Put);
                 requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var body = new User
                 {
                     UserName = request.UserName,
@@ -165,6 +197,8 @@ namespace ShopClient.Controllers
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Cập nhật người dùng thành công !");
+                    return RedirectToAction("Index", "Users");
+
                 }
 
 
@@ -174,22 +208,26 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Users");
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         public async Task<ActionResult> Delete(int userId)
         {
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Users/{userId}", RestSharp.Method.Delete);
                 requesrUrl.AddHeader("content-type", "application/json");
-
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var response = await client.ExecuteAsync(requesrUrl);
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Xóa người dùng thành công !");
+                    return RedirectToAction("Index", "Users");
+
                 }
 
             }
@@ -200,17 +238,28 @@ namespace ShopClient.Controllers
             }
             _toastNotification.Error("Xóa người dùng thất bại !");
             return RedirectToAction("Index", "Users");
+
         }
 
 
         public async Task<ActionResult> Profile(int userId)
         {
+            var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
+
             RestClient client = new RestClient(ApiPort);
             var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
             requesrUrl.AddHeader("content-type", "application/json");
+            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
             var response = await client.ExecuteAsync(requesrUrl);
             var user = JsonConvert.DeserializeObject<User>(response.Content);
-            return View(user);
+            if (user != null)
+            {
+                return View(user);
+
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
         [HttpPost]
@@ -245,11 +294,13 @@ namespace ShopClient.Controllers
             }
 
             var token = HttpContext.Session.GetString("AuthToken");
+            var tokenAuth = "Bearer " + token;
             try
             {
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Users/{userId}", RestSharp.Method.Put);
                 requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var body = new User
                 {
                     UserName = request.UserName,
@@ -268,6 +319,8 @@ namespace ShopClient.Controllers
                 if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                 {
                     _toastNotification.Success("Cập nhật người dùng thành công !");
+                    string refererUrl = Request.Headers["Referer"].ToString();
+                    return Redirect(refererUrl);
                 }
 
 
@@ -277,7 +330,8 @@ namespace ShopClient.Controllers
 
                 throw;
             }
-            return RedirectToAction("Index", "Home");
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View();
         }
 
     }

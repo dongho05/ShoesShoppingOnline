@@ -77,9 +77,13 @@ namespace ShopClient.Controllers
         {
             try
             {
+
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
                 RestClient client = new RestClient(ApiPort);
                 var requesrUrl = new RestRequest($"api/Users/get-user-by-username/{userName}", RestSharp.Method.Get);
                 requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
                 var response = await client.ExecuteAsync(requesrUrl);
                 var user = JsonConvert.DeserializeObject<User>(response.Content);
                 return user;

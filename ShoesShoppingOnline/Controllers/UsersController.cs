@@ -22,6 +22,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // GET: api/Users
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
@@ -57,6 +58,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // GET: api/Users/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -76,6 +78,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, UserRequest request)
         {
@@ -138,6 +141,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -161,7 +165,7 @@ namespace ShoesShoppingOnline.Controllers
         {
             return (_context.Users?.Any(e => e.UserId == id)).GetValueOrDefault();
         }
-
+        [Authorize]
         [HttpGet("get-user-by-username/{username}")]
         public async Task<ActionResult<User>> GetUserByUserName(string username)
         {
