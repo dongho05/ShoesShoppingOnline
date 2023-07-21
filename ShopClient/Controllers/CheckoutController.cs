@@ -59,7 +59,12 @@ namespace ShopClient.Controllers
             }
             return View();
         }
-
+        public CheckoutRequest GetBillInfo()
+        {
+            var json = HttpContext.Session.GetString("billInfo");
+            var billInfo = JsonConvert.DeserializeObject<CheckoutRequest>(json);
+            return billInfo;
+        }
         public async Task<IActionResult> Checkout(CheckoutRequest request)
         {
             var sessionUser = HttpContext.Session.GetString("currentuser");
@@ -83,11 +88,60 @@ namespace ShopClient.Controllers
                         SaveCartItemToDB(cart, orderId);
                     }
                 }
-                ClearCart();
+                //checkout => print bill
+                request.TotalPrice = GetTotalPrice();
+                var billInfoJson = JsonConvert.SerializeObject(request);
+                HttpContext.Session.SetString("billInfo", billInfoJson);
+
+                //ClearCart();
+                return View();
             }
 
+            return RedirectToAction("Index", "Login");
+        }
+
+
+
+        public async Task<ActionResult> PrintBilling()
+        {
+            var sessionUser = HttpContext.Session.GetString("currentuser");
+            if (sessionUser != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(sessionUser);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+                var user = GetUserByUserName(currentUser.UserName);
+                ViewData["UserId"] = user.Result.UserId;
+            }
+
+            var carts = GetCarts().Result.ToList();
+            if (carts != null)
+            {
+                List<Product> products = new List<Product>();
+                double totalPrice = 0.0f;
+                foreach (var item in carts)
+                {
+                    products.Add(GetProductById(item.ProductId).Result);
+                }
+                var joinedData = carts.Select(c => new { Cart = c, Product = products.FirstOrDefault(p => p.ProductId == c.ProductId) })
+                         .ToList();
+
+                foreach (var item in carts)
+                {
+                    totalPrice = totalPrice + (item.UnitPrice * item.Quantity);
+                }
+
+                ViewData["totalPrice"] = totalPrice;
+                ViewData["products"] = joinedData;
+
+            }
+
+            ViewData["billInfo"] = GetBillInfo();
+            ClearCart();
             return View();
         }
+
+
         void ClearCart()
         {
             var session = HttpContext.Session;

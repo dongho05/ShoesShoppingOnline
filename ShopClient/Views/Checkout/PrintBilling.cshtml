@@ -1,0 +1,146 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="card">
+    <div class="card-body">
+        <div class="container mb-5 mt-3">
+            <div class="row d-flex align-items-baseline">
+                <div class="col-xl-9">
+                    <p style="color: #7e8d9f;font-size: 20px;">Invoice >> <strong>ID: <span id="invoiceIdNumber"></span></strong></p>
+                </div>
+                <div class="col-xl-3 float-end">
+                    
+                </div>
+                <hr>
+            </div>
+
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="text-center">
+                        <i class="fab fa-mdb fa-4x ms-0" style="color:#5d9fc5 ;"></i>
+                        <p class="pt-0">Elfley</p>
+                    </div>
+
+                </div>
+
+
+                <div class="row">
+                    <div class="col-xl-8">
+                        <ul class="list-unstyled">
+                            <li class="text-muted">To: <span style="color:#5d9fc5 ;">@ViewBag.Name</span></li>
+                            <li class="text-muted">@ViewBag.billInfo.Address</li>
+                            <li class="text-muted"><i class="fas fa-phone"></i> @ViewBag.billInfo.Phone</li>
+                        </ul>
+                    </div>
+                    <div class="col-xl-4">
+                        <p class="text-muted">Invoice</p>
+                        <ul class="list-unstyled">
+                            <li class="text-muted" id="invoiceId">
+                                <i class="fas fa-circle" style="color:#84B0CA;"></i> <span class="fw-bold">ID:</span> <span id="invoiceNumber"></span>
+                            </li>
+                            <li class="text-muted" id="creationDate">
+                                <i class="fas fa-circle" style="color:#84B0CA ;"></i> <span class="fw-bold">Creation Date: </span>Jun 23,2021
+                            </li>
+                            <li class="text-muted">
+                                <i class="fas fa-circle" style="color:#84B0CA ;"></i> <span class="me-1 fw-bold">Status:</span><span class="badge bg-warning text-black fw-bold">
+                                    Paid
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row my-2 mx-1 justify-content-center">
+                    <table class="table table-striped table-borderless">
+                        <thead style="background-color:#84B0CA ;" class="text-white">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Qty</th>
+                                <th scope="col">Unit Price</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.products)
+                            {
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>@item.Product.ProductName</td>
+                                    <td>@item.Cart.Quantity</td>
+                                    <td>$@item.Cart.UnitPrice</td>
+                                    <td>$@(item.Cart.Quantity * item.Cart.UnitPrice)</td>
+                                </tr>
+                            }
+                           
+                            
+                        </tbody>
+
+                    </table>
+                </div>
+                <div class="row">
+                    
+                    <div class="col-xl-3">
+                        
+                        <p class="text-black float-start">
+                            <span class="text-black me-3"> Total Amount</span><span style="font-size: 25px;">$@ViewBag.totalPrice</span>
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-xl-10">
+                        <p>Thank you for your purchase</p>
+                    </div>
+                    <div class="col-xl-2">
+                        <a asp-controller="Home" class="btn btn-primary text-capitalize"
+              style="background-color:#60bdf3 ;">Back to home</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generateRandomId() {
+        // A function to create a random number with the desired length
+        function getRandomNumber(length) {
+            return Math.floor(Math.random() * Math.pow(10, length));
+        }
+
+        const timestamp = new Date().getTime();
+        const randomPart = getRandomNumber(6); // You can adjust the number of digits for the random part as needed
+        return `#${timestamp}-${randomPart}`;
+    }
+
+    // Update the elements with the generated random ID
+    document.addEventListener("DOMContentLoaded", function () {
+        const invoiceIdElement = document.getElementById("invoiceIdNumber");
+        const invoiceNumberElement = document.getElementById("invoiceNumber");
+        if (invoiceIdElement && invoiceNumberElement) {
+            const randomId = generateRandomId();
+            invoiceIdElement.innerText = randomId;
+            invoiceNumberElement.innerText = randomId;
+        }
+    });
+
+    function getCurrentDateTime() {
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const now = new Date();
+        const formattedDate = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+        const formattedTime = `${(now.getHours() < 10 ? '0' : '') + now.getHours()}:${(now.getMinutes() < 10 ? '0' : '') + now.getMinutes()}:${(now.getSeconds() < 10 ? '0' : '') + now.getSeconds()}`;
+        return formattedDate + " " + formattedTime;
+    }
+
+    // Update the element with the current date and time
+    document.addEventListener("DOMContentLoaded", function () {
+        const creationDateElement = document.getElementById("creationDate");
+        if (creationDateElement) {
+            creationDateElement.innerHTML = `<i class="fas fa-circle" style="color:#84B0CA;"></i> <span class="fw-bold">Creation Date: </span>${getCurrentDateTime()}`;
+        }
+    });
+</script>
