@@ -120,6 +120,15 @@ namespace ShopClient.Controllers
 
         public async Task<ActionResult> Details(int userId)
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
+
             var user = GetCurrentUser().Result;
             if (user.RoleId == 1)
             {
@@ -146,6 +155,15 @@ namespace ShopClient.Controllers
 
         public async Task<ActionResult> Edit(int userId)
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
+
             var token = HttpContext.Session.GetString("AuthToken");
             var tokenAuth = "Bearer " + token;
 
@@ -277,6 +295,14 @@ namespace ShopClient.Controllers
 
         public async Task<ActionResult> Profile(int userId)
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
             var token = HttpContext.Session.GetString("AuthToken");
             var tokenAuth = "Bearer " + token;
 
@@ -299,6 +325,15 @@ namespace ShopClient.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Profile(int userId, List<IFormFile> files, [Bind("UserId,UserName,Password,FullName,AvatarImage,Address,BirthDay,Gender,Email,Phone,RoleId")] UserRequest request)
         {
+
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
             var filePaths = new List<string>();
             if (files.Count > 0)
             {
@@ -325,6 +360,7 @@ namespace ShopClient.Controllers
             {
                 filePaths.Add(request.AvatarImage);
             }
+
 
             var token = HttpContext.Session.GetString("AuthToken");
             var tokenAuth = "Bearer " + token;

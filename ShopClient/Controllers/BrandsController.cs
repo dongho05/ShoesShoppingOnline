@@ -100,6 +100,14 @@ namespace ShopClient.Controllers
         // GET: ProductsController/Create
         public IActionResult Create()
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
             return View();
         }
 
@@ -146,6 +154,14 @@ namespace ShopClient.Controllers
         // GET: ProductsController/Edit/5
         public async Task<ActionResult> Edit(int brandId)
         {
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+            }
             var user = GetCurrentUser().Result;
             if (user.RoleId == 1)
             {

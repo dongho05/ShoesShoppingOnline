@@ -1,7 +1,9 @@
 ﻿using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RestSharp;
 using ShopClient.DTO.Request.Users;
+using ShopClient.Models;
 using System.Text.Json;
 
 namespace ShopClient.Controllers
@@ -25,7 +27,27 @@ namespace ShopClient.Controllers
         {
             return View();
         }
+        public async Task<User> GetUserByUserName(string userName)
+        {
+            try
+            {
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
 
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/get-user-by-username/{userName}", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var user = JsonConvert.DeserializeObject<User>(response.Content);
+                return user;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         [HttpPost("Signup")]
         public async Task<ActionResult> Signup([Bind("UserId,UserName,Password,FullName,AvatarImage,Address,BirthDay,Gender,Email,Phone,RoleId")] UserRequest request)
@@ -43,6 +65,13 @@ namespace ShopClient.Controllers
             {
                 _toastNotification.Error("Hãy nhập tất cả các trường !");
                 return RedirectToAction("Index", "Signup");
+            }
+
+            var checkUser = GetUserByUserName(request.UserName).Result;
+            if (checkUser != null)
+            {
+                _toastNotification.Error("Người dùng đã tồn tại !");
+                return RedirectToAction("Index", "Login");
             }
             try
             {

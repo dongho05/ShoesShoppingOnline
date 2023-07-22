@@ -34,15 +34,12 @@
                             
                         }
                         <li>
-                            <a class="nav-link text-dark" asp-controller="Cart">Cart</a>
+                            <a class="nav-link text-dark" asp-controller="Cart" asp-action="Index">Cart</a>
                         </li>
                         @if (ViewBag.Name != null)
                         {
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Profile">Profile(@ViewBag.Name)</a>
-                            </li>
-                            <li>
-                                <a class="nav-link text-dark" asp-controller="Logout">Logout(@ViewBag.Name)</a>
+                                <a class="nav-link text-dark" asp-controller="Logout" asp-action="Index">Logout(@ViewBag.Name)</a>
                             </li>
                         }
                         @if(ViewBag.Role == 1)
@@ -51,19 +48,19 @@
                                 <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Products" >Products</a>
+                                <a class="nav-link text-dark" asp-controller="Products" asp-action="Index">Products</a>
                             </li>
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Users">Users</a>
+                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Index">Users</a>
                             </li>
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Categories" >Categories</a>
+                                <a class="nav-link text-dark" asp-controller="Categories" asp-action="Index">Categories</a>
                             </li>
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Brands" >Brands</a>
+                                <a class="nav-link text-dark" asp-controller="Brands" asp-action="Index">Brands</a>
                             </li>
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Roles">Roles</a>
+                                <a class="nav-link text-dark" asp-controller="Roles" asp-action="Index">Roles</a>
                             </li>
                         }
                     </ul>

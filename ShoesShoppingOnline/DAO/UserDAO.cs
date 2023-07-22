@@ -4,6 +4,7 @@ namespace ShoesShoppingOnline.DAO
 {
     public class UserDAO
     {
+
         public static User GetUserByUsername(string username)
         {
             var member = new User();
@@ -12,7 +13,13 @@ namespace ShoesShoppingOnline.DAO
                 using (var connection = new ShoesShoppingOnlineContext())
                 {
                     member = connection.Users.FirstOrDefault(x => x.UserName.Equals(username));
-                    member.Role = RoleDAO.GetRoleById(member.RoleId);
+                    if (member != null)
+                    {
+                        member.Role = RoleDAO.GetRoleById(member.RoleId);
+                        return member;
+                    }
+                    return null;
+
                 }
             }
             catch (Exception)
@@ -20,7 +27,6 @@ namespace ShoesShoppingOnline.DAO
 
                 throw;
             }
-            return member;
         }
         public static User Login(string username, string password)
         {
