@@ -81,35 +81,99 @@ namespace ShopClient.Controllers
         }
 
         // GET: ProductsController
-        public async Task<ActionResult> Index(int currentPage)
+        //public async Task<ActionResult> Index(int currentPage, int ActivationStatus)
+        //{
+        //    var session = HttpContext.Session.GetString("currentuser");
+        //    if (session != null)
+        //    {
+        //        var currentUser = JsonConvert.DeserializeObject<User>(session);
+        //        ViewData["Name"] = currentUser.FullName;
+        //        ViewData["Role"] = currentUser.RoleId;
+
+        //    }
+
+        //    RestClient client = new RestClient(ApiPort);
+        //    var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
+        //    requesrUrl.AddHeader("content-type", "application/json");
+        //    var response = await client.ExecuteAsync(requesrUrl);
+        //    var products = JsonConvert.DeserializeObject<List<Product>>(response.Content).Where(x => x.IsActivated == true).ToList();
+
+        //    ViewData["NumberOfPages"] = products.Count / 6;
+
+        //    products = products.Skip(6 * currentPage).Take(6).ToList();
+
+        //    var listBrand = GetBrands();
+        //    var listCategory = GetCategories();
+        //    ViewData["listBrand"] = listBrand.Result.ToList();
+        //    ViewData["listCategory"] = listCategory.Result.ToList();
+        //    ViewData["currentPage"] = currentPage;
+
+
+        //    return View(products);
+        //}
+
+        public async Task<ActionResult> Index(int currentPage, int ActivationStatus)
         {
-            var session = HttpContext.Session.GetString("currentuser");
-            if (session != null)
+            if (ActivationStatus == 0)
             {
-                var currentUser = JsonConvert.DeserializeObject<User>(session);
-                ViewData["Name"] = currentUser.FullName;
-                ViewData["Role"] = currentUser.RoleId;
+                var session = HttpContext.Session.GetString("currentuser");
+                if (session != null)
+                {
+                    var currentUser = JsonConvert.DeserializeObject<User>(session);
+                    ViewData["Name"] = currentUser.FullName;
+                    ViewData["Role"] = currentUser.RoleId;
 
+                }
+
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var response = await client.ExecuteAsync(requesrUrl);
+                var products = JsonConvert.DeserializeObject<List<Product>>(response.Content).Where(x => x.IsActivated == true).ToList();
+
+                ViewData["NumberOfPages"] = products.Count / 6;
+
+                products = products.Skip(6 * currentPage).Take(6).ToList();
+
+                var listBrand = GetBrands();
+                var listCategory = GetCategories();
+                ViewData["listBrand"] = listBrand.Result.ToList();
+                ViewData["listCategory"] = listCategory.Result.ToList();
+                ViewData["currentPage"] = currentPage;
+
+
+                return View("Index", products);
             }
+            else
+            {
+                var session = HttpContext.Session.GetString("currentuser");
+                if (session != null)
+                {
+                    var currentUser = JsonConvert.DeserializeObject<User>(session);
+                    ViewData["Name"] = currentUser.FullName;
+                    ViewData["Role"] = currentUser.RoleId;
 
-            RestClient client = new RestClient(ApiPort);
-            var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
-            requesrUrl.AddHeader("content-type", "application/json");
-            var response = await client.ExecuteAsync(requesrUrl);
-            var products = JsonConvert.DeserializeObject<List<Product>>(response.Content);
+                }
 
-            ViewData["NumberOfPages"] = products.Count / 6;
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Products", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var response = await client.ExecuteAsync(requesrUrl);
+                var products = JsonConvert.DeserializeObject<List<Product>>(response.Content).ToList();
 
-            products = products.Skip(6 * currentPage).Take(6).ToList();
+                ViewData["NumberOfPages"] = products.Count / 6;
 
-            var listBrand = GetBrands();
-            var listCategory = GetCategories();
-            ViewData["listBrand"] = listBrand.Result.ToList();
-            ViewData["listCategory"] = listCategory.Result.ToList();
-            ViewData["currentPage"] = currentPage;
+                products = products.Skip(6 * currentPage).Take(6).ToList();
+
+                var listBrand = GetBrands();
+                var listCategory = GetCategories();
+                ViewData["listBrand"] = listBrand.Result.ToList();
+                ViewData["listCategory"] = listCategory.Result.ToList();
+                ViewData["currentPage"] = currentPage;
 
 
-            return View(products);
+                return View("Index", products);
+            }
         }
 
         public async Task<ActionResult> Filter(int currentPage)

@@ -97,7 +97,16 @@ namespace ShopClient.Controllers
             {
                 ProductId = p.ProductId,
                 ProductName = prod.ProductName,
-            }).ToList();
+                ImageProduct = prod.ImageProduct,
+                Describe = prod.Describe,
+                CategoryId = prod.CategoryId,
+                BrandId = prod.BrandId,
+                UnitPrice = prod.UnitPrice,
+                UnitInStock = prod.UnitInStock,
+                Discount = prod.Discount,
+                IsSaled = prod.IsSaled,
+                IsActivated = prod.IsActivated
+            }).Take(3).ToList();
             return result;
         }
         public async Task<List<Product>> GetProducts()

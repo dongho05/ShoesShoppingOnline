@@ -141,7 +141,7 @@ namespace ShoesShoppingOnline.Controllers
                 return NotFound();
             }
 
-            _context.Products.Remove(product);
+            product.IsActivated = false;
             await _context.SaveChangesAsync();
 
             return NoContent();
