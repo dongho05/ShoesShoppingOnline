@@ -9,5 +9,6 @@ namespace ShoesShoppingOnline.Repositories
         void AddRole(Role role);
         void UpdateRole(Role role);
         void DeleteRole(Role role);
+        void UpdateRoleForCustomer(int userId, int roleId);
     }
 }

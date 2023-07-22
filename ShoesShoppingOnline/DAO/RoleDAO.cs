@@ -4,6 +4,28 @@ namespace ShoesShoppingOnline.DAO
 {
     public class RoleDAO
     {
+        public static void UpdateRoleForCustomer(int userId, int roleId)
+        {
+            try
+            {
+                using (var connection = new ShoesShoppingOnlineContext())
+                {
+                    var user = connection.Users.FirstOrDefault(x => x.UserId == userId);
+                    if (user != null)
+                    {
+                        user.RoleId = roleId;
+                    }
+                    connection.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
         public static List<Role> GetAllRoles()
         {
             try

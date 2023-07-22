@@ -133,5 +133,68 @@ namespace ShopClient.Controllers
             return View();
         }
 
+
+        public async Task<List<User>> GetUsers()
+        {
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
+            {
+                try
+                {
+                    var token = HttpContext.Session.GetString("AuthToken");
+                    var tokenAuth = "Bearer " + token;
+
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Users", RestSharp.Method.Get);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    var products = JsonConvert.DeserializeObject<List<User>>(response.Content);
+                    if (products != null)
+                    {
+
+                        return products;
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return null;
+
+        }
+
+        public async Task<List<Role>> GetRoles()
+        {
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
+            {
+                try
+                {
+                    var token = HttpContext.Session.GetString("AuthToken");
+                    var tokenAuth = "Bearer " + token;
+
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Roles", RestSharp.Method.Get);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    var roles = JsonConvert.DeserializeObject<List<Role>>(response.Content);
+                    if (roles != null)
+                    {
+
+                        return roles;
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+            return null;
+        }
     }
 }

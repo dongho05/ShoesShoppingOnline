@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ShoesShoppingOnline.Models;
 using ShoesShoppingOnline.Repositories;
@@ -44,6 +44,17 @@ namespace ShoesShoppingOnline
         };
     });
 
+            //add policy để call odata qua các cổng với 1 cổng gốc
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:5034").
+                    AllowAnyMethod()
+                   .AllowAnyHeader();
+                });
+            });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -59,6 +70,11 @@ namespace ShoesShoppingOnline
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+            });
 
             app.MapControllers();
 

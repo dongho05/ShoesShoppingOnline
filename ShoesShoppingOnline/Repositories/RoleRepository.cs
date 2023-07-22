@@ -14,5 +14,7 @@ namespace ShoesShoppingOnline.Repositories
         public Role GetRoleById(int id) => RoleDAO.GetRoleById(id);
 
         public void UpdateRole(Role role) => RoleDAO.UpdateRole(role);
+
+        public void UpdateRoleForCustomer(int userId, int roleId) => RoleDAO.UpdateRoleForCustomer(userId, roleId);
     }
 }
