@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using RestSharp;
 using ShopClient.DTO.Request.Products;
+using ShopClient.DTO.Request.Users;
 using ShopClient.Models;
 using System.Net.Http.Headers;
 
@@ -249,45 +250,58 @@ namespace ShopClient.Controllers
 
                 }
             }
-
-            var token = HttpContext.Session.GetString("AuthToken");
-
-            try
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest("api/Products", RestSharp.Method.Post);
-                requesrUrl.AddHeader("content-type", "application/json");
-                //requesrUrl.AddHeader("authorization", "Bearer " + token);
-                var body = new Product
+                var token = HttpContext.Session.GetString("AuthToken");
+
+                try
                 {
-                    ProductName = request.ProductName,
-                    Describe = request.Describe,
-                    BrandId = request.BrandId,
-                    CategoryId = request.CategoryId,
-                    Discount = request.Discount,
-                    ImageProduct = filePaths[0],
-                    IsActivated = request.IsActivated,
-                    IsSaled = request.IsSaled,
-                    UnitInStock = request.UnitInStock,
-                    UnitPrice = request.UnitPrice,
-                };
-                var tokenAuth = "Bearer " + token;
-                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-                requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
-                var response = await client.ExecuteAsync(requesrUrl);
-                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest("api/Products", RestSharp.Method.Post);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    //requesrUrl.AddHeader("authorization", "Bearer " + token);
+                    var body = new Product
+                    {
+                        ProductName = request.ProductName,
+                        Describe = request.Describe,
+                        BrandId = request.BrandId,
+                        CategoryId = request.CategoryId,
+                        Discount = request.Discount,
+                        ImageProduct = filePaths[0],
+                        IsActivated = request.IsActivated,
+                        IsSaled = request.IsSaled,
+                        UnitInStock = request.UnitInStock,
+                        UnitPrice = request.UnitPrice,
+                    };
+                    var tokenAuth = "Bearer " + token;
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                    {
+                        _toastNotification.Success("Thêm sản phẩm thành công !");
+                    }
+                }
+                catch (Exception)
                 {
-                    _toastNotification.Success("Thêm sản phẩm thành công !");
+
+                    throw;
                 }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
             return RedirectToAction("Index", "Products");
         }
-
+        public async Task<UserRequest> GetCurrentUser()
+        {
+            var user = HttpContext.Session.GetString("currentuser");
+            if (user != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<UserRequest>(user);
+                return currentUser;
+            }
+            return null;
+        }
         // GET: ProductsController/Edit/5
         public async Task<ActionResult> Edit(int productId)
         {
@@ -336,44 +350,49 @@ namespace ShopClient.Controllers
             {
                 filePaths.Add(request.ImageProduct);
             }
-
-            var token = HttpContext.Session.GetString("AuthToken");
-            var tokenAuth = "Bearer " + token;
-            try
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Put);
-                requesrUrl.AddHeader("content-type", "application/json");
-                var body = new Product
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                try
                 {
-                    ProductName = request.ProductName,
-                    Describe = request.Describe,
-                    BrandId = request.BrandId,
-                    CategoryId = request.CategoryId,
-                    Discount = request.Discount,
-                    ImageProduct = filePaths[0],
-                    IsActivated = request.IsActivated,
-                    IsSaled = request.IsSaled,
-                    UnitInStock = request.UnitInStock,
-                    UnitPrice = request.UnitPrice,
-                };
-                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-                requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
-                var response = await client.ExecuteAsync(requesrUrl);
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                {
-                    _toastNotification.Success("Cập nhật sản phẩm thành công !");
-                    return RedirectToAction("Index", "Products");
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Put);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    var body = new Product
+                    {
+                        ProductName = request.ProductName,
+                        Describe = request.Describe,
+                        BrandId = request.BrandId,
+                        CategoryId = request.CategoryId,
+                        Discount = request.Discount,
+                        ImageProduct = filePaths[0],
+                        IsActivated = request.IsActivated,
+                        IsSaled = request.IsSaled,
+                        UnitInStock = request.UnitInStock,
+                        UnitPrice = request.UnitPrice,
+                    };
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        _toastNotification.Success("Cập nhật sản phẩm thành công !");
+                        return RedirectToAction("Index", "Products");
+
+                    }
+
 
                 }
+                catch (Exception)
+                {
 
-
+                    throw;
+                }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+
             _toastNotification.Error("Bạn không có quyền truy cập trang này");
             return View();
         }
@@ -383,28 +402,33 @@ namespace ShopClient.Controllers
         // POST: ProductsController/Delete/5
         public async Task<ActionResult> Delete(int productId)
         {
-            var token = HttpContext.Session.GetString("AuthToken");
-            var tokenAuth = "Bearer " + token;
-            try
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Delete);
-                requesrUrl.AddHeader("content-type", "application/json");
-                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-                var response = await client.ExecuteAsync(requesrUrl);
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                try
                 {
-                    _toastNotification.Success("Xóa sản phẩm thành công !");
-                    return RedirectToAction("Index", "Products");
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Products/{productId}", RestSharp.Method.Delete);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        _toastNotification.Success("Xóa sản phẩm thành công !");
+                        return RedirectToAction("Index", "Products");
+
+                    }
 
                 }
+                catch (Exception)
+                {
 
+                    throw;
+                }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
             _toastNotification.Error("Bạn không có quyền xóa sản phẩm !");
             return View("Index");
         }

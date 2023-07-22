@@ -26,31 +26,47 @@ namespace ShopClient.Controllers
             ApiPort = configuration.GetSection("ApiHost").Value;
         }
 
+        public async Task<UserRequest> GetCurrentUser()
+        {
+            var user = HttpContext.Session.GetString("currentuser");
+            if (user != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<UserRequest>(user);
+                return currentUser;
+            }
+            return null;
+        }
+
         public async Task<List<User>> GetUsers()
         {
-            try
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                var token = HttpContext.Session.GetString("AuthToken");
-                var tokenAuth = "Bearer " + token;
+                try
+                {
+                    var token = HttpContext.Session.GetString("AuthToken");
+                    var tokenAuth = "Bearer " + token;
 
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Users", RestSharp.Method.Get);
-                requesrUrl.AddHeader("content-type", "application/json");
-                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-                var response = await client.ExecuteAsync(requesrUrl);
-                var products = JsonConvert.DeserializeObject<List<User>>(response.Content);
-                if (products != null)
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Users", RestSharp.Method.Get);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    var products = JsonConvert.DeserializeObject<List<User>>(response.Content);
+                    if (products != null)
+                    {
+
+                        return products;
+                    }
+                }
+                catch (Exception)
                 {
 
-                    return products;
+                    throw;
                 }
-                return null;
             }
-            catch (Exception)
-            {
+            return null;
 
-                throw;
-            }
         }
 
         public async Task<List<Role>> GetRoles()
@@ -73,45 +89,57 @@ namespace ShopClient.Controllers
 
         public async Task<IActionResult> Index(int currentPage)
         {
-            var session = HttpContext.Session.GetString("currentuser");
-            if (session != null)
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                var currentUser = JsonConvert.DeserializeObject<User>(session);
-                ViewData["Name"] = currentUser.FullName;
-                ViewData["Role"] = currentUser.RoleId;
+                var session = HttpContext.Session.GetString("currentuser");
+                if (session != null)
+                {
+                    var currentUser = JsonConvert.DeserializeObject<User>(session);
+                    ViewData["Name"] = currentUser.FullName;
+                    ViewData["Role"] = currentUser.RoleId;
 
+                }
+
+                var users = GetUsers().Result;
+                if (users != null)
+                {
+                    ViewData["NumberOfPages"] = users.Count / 6;
+
+                    users = users.Skip(6 * currentPage).Take(6).ToList();
+
+                    ViewData["currentPage"] = currentPage;
+                    return View(users);
+                }
             }
 
-            var users = GetUsers().Result;
-            if (users != null)
-            {
-                ViewData["NumberOfPages"] = users.Count / 6;
 
-                users = users.Skip(6 * currentPage).Take(6).ToList();
-
-                ViewData["currentPage"] = currentPage;
-                return View(users);
-            }
             _toastNotification.Error("Bạn không có quyền truy cập trang này");
             return View();
         }
 
         public async Task<ActionResult> Details(int userId)
         {
-            var token = HttpContext.Session.GetString("AuthToken");
-            var tokenAuth = "Bearer " + token;
-
-            RestClient client = new RestClient(ApiPort);
-            var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
-            requesrUrl.AddHeader("content-type", "application/json");
-            requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-            var response = await client.ExecuteAsync(requesrUrl);
-            var user = JsonConvert.DeserializeObject<User>(response.Content);
-            if (user != null)
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
 
-                return View(user);
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var userD = JsonConvert.DeserializeObject<User>(response.Content);
+                if (userD != null)
+                {
+
+                    return View(userD);
+                }
             }
+
+
             _toastNotification.Error("Bạn không có quyền truy cập trang này");
             return View();
         }
@@ -214,28 +242,33 @@ namespace ShopClient.Controllers
 
         public async Task<ActionResult> Delete(int userId)
         {
-            var token = HttpContext.Session.GetString("AuthToken");
-            var tokenAuth = "Bearer " + token;
-            try
+            var user = GetCurrentUser().Result;
+            if (user.RoleId == 1)
             {
-                RestClient client = new RestClient(ApiPort);
-                var requesrUrl = new RestRequest($"api/Users/{userId}", RestSharp.Method.Delete);
-                requesrUrl.AddHeader("content-type", "application/json");
-                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
-                var response = await client.ExecuteAsync(requesrUrl);
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                try
                 {
-                    _toastNotification.Success("Xóa người dùng thành công !");
-                    return RedirectToAction("Index", "Users");
+                    RestClient client = new RestClient(ApiPort);
+                    var requesrUrl = new RestRequest($"api/Users/{userId}", RestSharp.Method.Delete);
+                    requesrUrl.AddHeader("content-type", "application/json");
+                    requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                    var response = await client.ExecuteAsync(requesrUrl);
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                    {
+                        _toastNotification.Success("Xóa người dùng thành công !");
+                        return RedirectToAction("Index", "Users");
+
+                    }
 
                 }
+                catch (Exception)
+                {
 
+                    throw;
+                }
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
             _toastNotification.Error("Xóa người dùng thất bại !");
             return RedirectToAction("Index", "Users");
 

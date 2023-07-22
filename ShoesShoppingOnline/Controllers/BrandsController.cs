@@ -8,7 +8,6 @@ namespace ShoesShoppingOnline.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class BrandsController : ControllerBase
     {
         private readonly ShoesShoppingOnlineContext _context;
@@ -31,6 +30,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // GET: api/Brands/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Brand>> GetBrand(int id)
         {
@@ -50,6 +50,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // PUT: api/Brands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBrand(int id, BrandRequest request)
         {
@@ -78,6 +79,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // POST: api/Brands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Brand>> PostBrand(BrandRequest request)
         {
@@ -92,6 +94,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // DELETE: api/Brands/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrand(int id)
         {

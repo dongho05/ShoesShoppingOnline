@@ -31,10 +31,11 @@
                             <li>
                                 <a class="nav-link text-dark" asp-controller="Login">Login</a>
                             </li>
-                            <li>
-                                <a class="nav-link text-dark" asp-controller="Cart">Cart</a>
-                            </li>
+                            
                         }
+                        <li>
+                            <a class="nav-link text-dark" asp-controller="Cart">Cart</a>
+                        </li>
                         @if (ViewBag.Name != null)
                         {
                             <li>
@@ -47,7 +48,7 @@
                         @if(ViewBag.Role == 1)
                         {
                             <li>
-                                <a class="nav-link text-dark" asp-controller="Dashboard">Dashboard</a>
+                                <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Index">Dashboard</a>
                             </li>
                             <li>
                                 <a class="nav-link text-dark" asp-controller="Dashboard" asp-action="Table">Table</a>
@@ -57,6 +58,9 @@
                             </li>
                             <li>
                                 <a class="nav-link text-dark" asp-controller="Products" >Products</a>
+                            </li>
+                            <li>
+                                <a class="nav-link text-dark" asp-controller="Users">Users</a>
                             </li>
                             <li>
                                 <a class="nav-link text-dark" asp-controller="Categories" >Categories</a>

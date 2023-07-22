@@ -8,7 +8,7 @@ namespace ShoesShoppingOnline.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+
     public class CategoriesController : ControllerBase
     {
         private readonly ShoesShoppingOnlineContext _context;
@@ -30,6 +30,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // GET: api/Categories/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Category>> GetCategory(int id)
         {
@@ -49,6 +50,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // PUT: api/Categories/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, CategoryRequest request)
         {
@@ -78,6 +80,7 @@ namespace ShoesShoppingOnline.Controllers
 
         // POST: api/Categories
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(CategoryRequest request)
         {
@@ -92,6 +95,7 @@ namespace ShoesShoppingOnline.Controllers
         }
 
         // DELETE: api/Categories/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
