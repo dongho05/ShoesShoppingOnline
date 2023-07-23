@@ -11,5 +11,6 @@ namespace ShoesShoppingOnline.Repositories
         void DeleteUser(User user);
         User Login(string username, string password);
         User GetUserByUsername(string username);
+        void ChangePassword(int userId, string password);
     }
 }

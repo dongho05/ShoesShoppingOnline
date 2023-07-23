@@ -5,6 +5,28 @@ namespace ShoesShoppingOnline.DAO
     public class UserDAO
     {
 
+        public static void ChangePassword(int userId, string password)
+        {
+            var member = new User();
+            try
+            {
+                using (var connection = new ShoesShoppingOnlineContext())
+                {
+                    member = connection.Users.FirstOrDefault(x => x.UserId.Equals(userId));
+                    if (member != null)
+                    {
+                        member.Password = password;
+                    }
+                    connection.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public static User GetUserByUsername(string username)
         {
             var member = new User();

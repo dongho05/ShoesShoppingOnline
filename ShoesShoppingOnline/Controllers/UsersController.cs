@@ -38,7 +38,19 @@ namespace ShoesShoppingOnline.Controllers
         {
             return GetCurrentUser();
         }
+        [Authorize]
+        [HttpPost("change-password/{userId}")]
+        public async Task<IActionResult> ChangePassword(int userId, [FromBody] ChangePasswordRequest request)
+        {
+            var user = repo.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
+            repo.ChangePassword(userId, request.newPassword);
+            return NoContent();
+        }
         private UserRequest GetCurrentUser()
         {
             var identity = HttpContext.User.Identity as ClaimsIdentity;

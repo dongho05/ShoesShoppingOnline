@@ -7,6 +7,8 @@ namespace ShoesShoppingOnline.Repositories
     {
         public void AddUser(User user) => UserDAO.SaveUser(user);
 
+        public void ChangePassword(int userId, string password) => UserDAO.ChangePassword(userId, password);
+
         public void DeleteUser(User user) => UserDAO.DeleteUser(user);
 
         public List<User> GetAllUsers() => UserDAO.GetAllUsers();

@@ -118,6 +118,117 @@ namespace ShopClient.Controllers
             return View();
         }
 
+        public async Task<User> GetUserById(int userId)
+        {
+            try
+            {
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var user = JsonConvert.DeserializeObject<User>(response.Content);
+                return user;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<User> GetUserByUserName(string userName)
+        {
+            try
+            {
+
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/get-user-by-username/{userName}", RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var user = JsonConvert.DeserializeObject<User>(response.Content);
+                return user;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public ActionResult ChangePasswordRedirect()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ChangePassword()
+        {
+            var oldPassword = Request.Form["oldPass"];
+            var newPassword = Request.Form["newPass"];
+            var repeatPass = Request.Form["repeatnewpassword"];
+
+
+            if (String.IsNullOrEmpty(oldPassword) || String.IsNullOrEmpty(newPassword) || String.IsNullOrEmpty(repeatPass))
+            {
+                _toastNotification.Error("Hãy nhập đủ các trường.");
+                string refererUrl = Request.Headers["Referer"].ToString();
+                return Redirect(refererUrl);
+            }
+            var session = HttpContext.Session.GetString("currentuser");
+            if (session != null)
+            {
+                var currentUser = JsonConvert.DeserializeObject<User>(session);
+                ViewData["Name"] = currentUser.FullName;
+                ViewData["Role"] = currentUser.RoleId;
+
+                var getUser = GetUserByUserName(currentUser.UserName).Result;
+
+
+
+                var userCheck = GetUserById(getUser.UserId).Result;
+                if (userCheck.Password != oldPassword)
+                {
+                    _toastNotification.Error("Mật khẩu cũ đã nhập sai.");
+                    string refererUrl = Request.Headers["Referer"].ToString();
+                    return Redirect(refererUrl);
+                }
+
+                if (!newPassword.ToString().Equals(repeatPass.ToString()))
+                {
+                    _toastNotification.Error("Mật khẩu mới và nhập lại mật khẩu không trùng.");
+                    string refererUrl = Request.Headers["Referer"].ToString();
+                    return Redirect(refererUrl);
+                }
+
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/change-password/" + int.Parse(getUser.UserId.ToString()), RestSharp.Method.Post);
+                requesrUrl.AddHeader("content-type", "application/json");
+                var body = new ChangePasswordRequest
+                {
+                    newPassword = newPassword
+                };
+                requesrUrl.AddParameter("application/json-patch+json", body, ParameterType.RequestBody);
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                {
+                    _toastNotification.Success("Đổi mật khẩu thành công.");
+                    return RedirectToAction("Index", "Home");
+                }
+
+            }
+            _toastNotification.Error("Bạn không có quyền truy cập trang này");
+            return View("Index", "Login");
+
+        }
+
         public async Task<ActionResult> Details(int userId)
         {
             var session = HttpContext.Session.GetString("currentuser");
@@ -127,6 +238,20 @@ namespace ShopClient.Controllers
                 ViewData["Name"] = currentUser.FullName;
                 ViewData["Role"] = currentUser.RoleId;
 
+                var token = HttpContext.Session.GetString("AuthToken");
+                var tokenAuth = "Bearer " + token;
+
+                RestClient client = new RestClient(ApiPort);
+                var requesrUrl = new RestRequest($"api/Users/" + userId, RestSharp.Method.Get);
+                requesrUrl.AddHeader("content-type", "application/json");
+                requesrUrl.AddParameter("Authorization", tokenAuth.Replace("\"", ""), ParameterType.HttpHeader);
+                var response = await client.ExecuteAsync(requesrUrl);
+                var userD = JsonConvert.DeserializeObject<User>(response.Content);
+                if (userD != null)
+                {
+
+                    return View(userD);
+                }
             }
 
             var user = GetCurrentUser().Result;
